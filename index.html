@@ -778,6 +778,17 @@ function save(){
   localStorage.setItem('tie_clients',  JSON.stringify(clients));
   localStorage.setItem('tie_projects', JSON.stringify(projects));
   localStorage.setItem('tie_logs',     JSON.stringify(logs));
+  // Sync to Neon DB in background
+  fetch('/api/data', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      tie_team: team,
+      tie_clients: clients,
+      tie_projects: projects,
+      tie_logs: logs
+    })
+  }).catch(()=>{});
 }
 
 // ══ HELPERS ══
@@ -1938,12 +1949,26 @@ function deleteSilo(id){
   silos=silos.filter(s=>s.id!==id); saveSilos(); renderSilos();
 }
 
-populateClientModal();
-renderDashboard();
-document.getElementById('tc-team').textContent = team.length;
-document.getElementById('tc-clients').textContent = clients.length;
-document.getElementById('tc-projects').textContent = projects.length;
-document.getElementById('tc-silos').textContent = silos.length;
+// Load from Neon DB on startup (overrides localStorage if DB has data)
+fetch('/api/data').then(r=>r.json()).then(data=>{
+  if(data.tie_team    && data.tie_team.length)    { team=data.tie_team;       localStorage.setItem('tie_team',JSON.stringify(team)); }
+  if(data.tie_clients && data.tie_clients.length)  { clients=data.tie_clients; localStorage.setItem('tie_clients',JSON.stringify(clients)); }
+  if(data.tie_projects&& data.tie_projects.length) { projects=data.tie_projects;localStorage.setItem('tie_projects',JSON.stringify(projects)); }
+  if(data.tie_logs    && data.tie_logs.length)     { logs=data.tie_logs;       localStorage.setItem('tie_logs',JSON.stringify(logs)); }
+  populateClientModal();
+  renderDashboard();
+  document.getElementById('tc-team').textContent = team.length;
+  document.getElementById('tc-clients').textContent = clients.length;
+  document.getElementById('tc-projects').textContent = projects.length;
+  document.getElementById('tc-silos').textContent = silos.length;
+}).catch(()=>{
+  populateClientModal();
+  renderDashboard();
+  document.getElementById('tc-team').textContent = team.length;
+  document.getElementById('tc-clients').textContent = clients.length;
+  document.getElementById('tc-projects').textContent = projects.length;
+  document.getElementById('tc-silos').textContent = silos.length;
+});
 
 // Unified goTab — overrides the earlier definition
 function goTab(tab, el){
