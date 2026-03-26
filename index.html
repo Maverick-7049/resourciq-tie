@@ -24,6 +24,24 @@
 body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;}
 ::-webkit-scrollbar{width:6px;height:6px;} ::-webkit-scrollbar-track{background:var(--bg3);} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 
+/* LOGIN OVERLAY */
+#login-overlay{position:fixed;inset:0;background:#f7f6f2;z-index:9999;display:flex;align-items:center;justify-content:center;}
+#login-overlay.hidden{display:none;}
+.login-box{background:#fff;border:1px solid var(--border);border-radius:16px;padding:44px 48px;width:380px;box-shadow:0 8px 40px rgba(0,0,0,0.08);}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.login-logo .brand-mark{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;letter-spacing:-0.5px;}
+.login-logo-text{font-size:16px;font-weight:700;letter-spacing:-0.4px;}
+.login-logo-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.login-title{font-size:18px;font-weight:700;letter-spacing:-0.4px;margin-bottom:6px;}
+.login-sub{font-size:12.5px;color:var(--text2);margin-bottom:24px;}
+.login-field{margin-bottom:14px;}
+.login-field label{display:block;font-size:11.5px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+.login-field input{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--r);font-family:var(--sans);font-size:13px;background:var(--bg);outline:none;transition:border-color 0.15s;}
+.login-field input:focus{border-color:var(--accent);}
+.login-err{font-size:12px;color:var(--red);margin-bottom:12px;display:none;}
+.login-btn{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-family:var(--sans);font-size:13.5px;font-weight:600;cursor:pointer;transition:background 0.15s;margin-top:4px;}
+.login-btn:hover{background:#1e3a8a;}
+
 /* NAV */
 .nav{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;height:50px;position:sticky;top:0;z-index:300;gap:0;overflow-x:auto;}
 .brand{font-size:13px;font-weight:700;color:var(--text);letter-spacing:-0.3px;margin-right:24px;display:flex;align-items:center;gap:7px;flex-shrink:0;}
@@ -215,6 +233,31 @@ select option{background:var(--bg2);}
 <body>
 
 <!-- NAV -->
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="brand-mark">TIE</div>
+      <div>
+        <div class="login-logo-text">ResourcIQ</div>
+        <div class="login-logo-sub">The Impact Engine</div>
+      </div>
+    </div>
+    <div class="login-title">Welcome back</div>
+    <div class="login-sub">Sign in to access the dashboard</div>
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="Enter username" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="Enter password" autocomplete="current-password">
+    </div>
+    <div class="login-err" id="login-err">Incorrect username or password.</div>
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+  </div>
+</div>
+
 <nav class="nav">
   <div class="brand">
     <div class="brand-mark">TIE</div>
@@ -227,6 +270,9 @@ select option{background:var(--bg2);}
   <div class="nav-tab" onclick="goTab('silos',this)">Silos <span class="tab-count" id="tc-silos">0</span></div>
   <div class="nav-tab" onclick="goTab('hours',this)">Hour Logs</div>
   <div class="nav-tab" onclick="goTab('costs',this)">Cost Analysis</div>
+  <div style="margin-left:auto;flex-shrink:0;">
+    <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px;" onclick="doLogout()">&#x2192; Sign Out</button>
+  </div>
 </nav>
 
 <!-- ═══════════════════════════════════════════ DASHBOARD ══ -->
@@ -526,6 +572,39 @@ select option{background:var(--bg2);}
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════════════════
+(function(){
+  if(localStorage.getItem('tie_auth') === '1'){
+    document.getElementById('login-overlay').classList.add('hidden');
+  }
+  document.getElementById('login-pass').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') doLogin();
+  });
+  document.getElementById('login-user').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') doLogin();
+  });
+})();
+
+function doLogin(){
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if(u === 'TIE@CostA' && p === 'Growth@8686'){
+    localStorage.setItem('tie_auth','1');
+    document.getElementById('login-overlay').classList.add('hidden');
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
+
+function doLogout(){
+  localStorage.removeItem('tie_auth');
+  location.reload();
+}
+
 // ══════════════════════════════════════════════════════════
 // CONSTANTS & DATA
 // ══════════════════════════════════════════════════════════
