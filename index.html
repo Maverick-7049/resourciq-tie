@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResourcIQ — The Impact Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f6f2; --bg2:#ffffff; --bg3:#f2f1ec; --surface:#fafaf7;
+  --border:#e6e4dc; --border2:#d0cec5;
+  --text:#18181b; --text2:#6b6b75; --text3:#a0a0ab;
+  --accent:#1e40af; --accent-bg:#eff6ff; --accent-border:#bfdbfe;
+  --green:#15803d; --green-bg:#f0fdf4; --green-border:#bbf7d0;
+  --amber:#b45309; --amber-bg:#fffbeb; --amber-border:#fde68a;
+  --red:#b91c1c; --red-bg:#fef2f2; --red-border:#fecaca;
+  --purple:#6d28d9; --purple-bg:#f5f3ff; --purple-border:#ddd6fe;
+  --teal:#0f766e; --teal-bg:#f0fdfa; --teal-border:#99f6e4;
+  --pink:#be185d; --pink-bg:#fdf2f8; --pink-border:#fbcfe8;
+  --sans:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --r:7px; --r2:11px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;}
+::-webkit-scrollbar{width:6px;height:6px;} ::-webkit-scrollbar-track{background:var(--bg3);} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* NAV */
+.nav{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;height:50px;position:sticky;top:0;z-index:300;gap:0;overflow-x:auto;}
+.brand{font-size:13px;font-weight:700;color:var(--text);letter-spacing:-0.3px;margin-right:24px;display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.brand-mark{background:var(--accent);color:#fff;width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;letter-spacing:-0.5px;}
+.brand-sub{font-size:10px;color:var(--text3);font-weight:400;}
+.nav-tab{height:50px;padding:0 13px;display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color 0.1s;user-select:none;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
+.nav-tab .tab-count{background:var(--bg3);color:var(--text2);font-size:10px;padding:1px 5px;border-radius:10px;font-weight:500;}
+.nav-tab.active .tab-count{background:var(--accent-bg);color:var(--accent);}
+
+/* PAGES */
+.page{display:none;padding:24px 28px;max-width:1500px;margin:0 auto;}
+.page.active{display:block;}
+.page-hdr{margin-bottom:20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.page-hdr-left .page-title{font-size:17px;font-weight:700;letter-spacing:-0.4px;}
+.page-hdr-left .page-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.section-title{font-size:12.5px;font-weight:600;color:var(--text);}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:20px;}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;}
+.stat-lbl{font-size:10.5px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:7px;}
+.stat-val{font-size:21px;font-weight:700;letter-spacing:-0.5px;font-family:var(--mono);}
+.stat-hint{font-size:11px;color:var(--text3);margin-top:3px;}
+.c-green{color:var(--green);} .c-amber{color:var(--amber);} .c-red{color:var(--red);} .c-accent{color:var(--accent);} .c-purple{color:var(--purple);}
+
+/* TABLES */
+.tbl-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+th{background:var(--bg3);color:var(--text2);font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;padding:9px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--bg3);}
+.tbl-empty{text-align:center;padding:36px;color:var(--text3);font-size:12.5px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;}
+.badge-blue{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border);}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border);}
+.badge-teal{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-border);}
+.badge-pink{background:var(--pink-bg);color:var(--pink);border:1px solid var(--pink-border);}
+.badge-gray{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:var(--r);font-family:var(--sans);font-size:12.5px;font-weight:500;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:5px;transition:all 0.1s;white-space:nowrap;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:#1e3a8a;}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-ghost:hover{background:var(--bg3);color:var(--text);}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.btn-danger:hover{background:#fee2e2;}
+.btn-sm{padding:4px 9px;font-size:11.5px;}
+.btn-xs{padding:3px 7px;font-size:11px;}
+
+/* FORMS */
+.form-grid{display:grid;gap:12px;margin-bottom:14px;}
+.form-grid.g2{grid-template-columns:1fr 1fr;}
+.form-grid.g3{grid-template-columns:1fr 1fr 1fr;}
+.form-grid.g4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.form-field label{font-size:11.5px;font-weight:500;color:var(--text2);display:block;margin-bottom:4px;}
+.form-field input,.form-field select,.form-field textarea{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;color:var(--text);font-family:var(--sans);font-size:12.5px;outline:none;transition:border 0.1s;}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--accent);}
+.form-field input::placeholder{color:var(--text3);}
+select option{background:var(--bg2);}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:400;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:24px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+.modal-sm{max-width:460px;}
+.modal-md{max-width:580px;}
+.modal-lg{max-width:760px;}
+.modal-xl{max-width:960px;}
+.modal-title{font-size:15px;font-weight:700;letter-spacing:-0.3px;margin-bottom:18px;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+
+/* AVATAR */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0;font-size:11px;}
+.av-sm{width:26px;height:26px;font-size:10px;}
+.av-md{width:32px;height:32px;font-size:12px;}
+
+/* PROGRESS */
+.prog{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width 0.3s;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:18px 20px;}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--text2);margin-bottom:14px;}
+
+/* GRID HELPERS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;}
+
+/* DIVIDER ROW */
+.cost-line{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
+.cost-line:last-child{border-bottom:none;}
+.cost-line.total{font-weight:700;font-size:13px;padding-top:10px;margin-top:4px;border-top:2px solid var(--border2);border-bottom:none;}
+
+/* DEPT COLORS */
+.dept-acc{--dc:#1e40af;--dc-bg:#eff6ff;} .dept-ads{--dc:#7c3aed;--dc-bg:#f5f3ff;} .dept-cnt{--dc:#0f766e;--dc-bg:#f0fdfa;} .dept-cre{--dc:#be185d;--dc-bg:#fdf2f8;} .dept-hr{--dc:#374151;--dc-bg:#f9fafb;} .dept-seo{--dc:#b45309;--dc-bg:#fffbeb;} .dept-soc{--dc:#15803d;--dc-bg:#f0fdf4;} .dept-tec{--dc:#1d4ed8;--dc-bg:#eff6ff;} .dept-vid{--dc:#dc2626;--dc-bg:#fef2f2;}
+.dept-tag{background:var(--dc-bg);color:var(--dc);border:1px solid color-mix(in srgb,var(--dc) 25%,transparent);font-size:10.5px;font-weight:500;padding:2px 7px;border-radius:20px;white-space:nowrap;}
+
+/* SNAPSHOT SPECIFIC */
+.snap-header{background:var(--accent);color:#fff;border-radius:var(--r2) var(--r2) 0 0;padding:18px 22px;}
+.snap-body{background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r2) var(--r2);overflow:hidden;}
+.snap-section{padding:16px 22px;border-bottom:1px solid var(--border);}
+.snap-section:last-child{border-bottom:none;}
+.snap-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border-radius:var(--r);overflow:hidden;}
+.snap-kpi{background:var(--bg2);padding:12px 14px;}
+.snap-kpi-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text2);margin-bottom:4px;}
+.snap-kpi-val{font-size:18px;font-weight:700;font-family:var(--mono);letter-spacing:-0.3px;}
+.snap-kpi-sub{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* MARGIN INDICATOR */
+.margin-bar-wrap{position:relative;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:6px;}
+.margin-bar{height:100%;border-radius:4px;transition:width 0.4s;}
+
+/* ALLOCATION CHIP */
+.alloc-chip{display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11.5px;margin:2px;}
+
+/* FILTER ROW */
+.filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+.filter-row select,.filter-row input{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:6px 10px;color:var(--text);font-family:var(--sans);font-size:12px;outline:none;}
+.filter-row select:focus,.filter-row input:focus{border-color:var(--accent);}
+.filter-pill{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:4px 12px;font-size:11.5px;cursor:pointer;color:var(--text2);transition:all 0.1s;}
+.filter-pill.active{background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent);font-weight:500;}
+
+/* INLINE EDIT */
+.ie{background:transparent;border:none;border-bottom:1.5px dashed var(--border2);border-radius:0;color:var(--accent);font-family:var(--mono);font-size:12px;width:60px;text-align:center;padding:1px 2px;outline:none;}
+.ie:focus{border-bottom-color:var(--accent);}
+
+/* MISC */
+.mono{font-family:var(--mono);} .muted{color:var(--text2);} .small{font-size:11.5px;} .xs{font-size:11px;} .fw6{font-weight:600;} .fw7{font-weight:700;}
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+.tag-list{display:flex;flex-wrap:wrap;gap:4px;}
+.pill-row{display:flex;gap:4px;flex-wrap:wrap;}
+
+/* SILOS */
+.silo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:16px;}
+.silo-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;transition:box-shadow 0.15s;}
+.silo-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08);}
+.silo-hdr{padding:16px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.silo-name{font-size:14px;font-weight:700;letter-spacing:-0.3px;}
+.silo-lead{font-size:11.5px;color:var(--text2);margin-top:2px;display:flex;align-items:center;gap:5px;}
+.silo-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);}
+.silo-kpi{background:var(--bg2);padding:10px 14px;}
+.silo-kpi-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:3px;}
+.silo-kpi-val{font-size:15px;font-weight:700;font-family:var(--mono);letter-spacing:-0.3px;}
+.silo-members{padding:14px 20px;}
+.silo-member-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
+.silo-member-row:last-child{border-bottom:none;}
+.silo-clients{padding:0 20px 14px;}
+.silo-client-chip{display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;margin:2px;cursor:default;}
+.silo-actions{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:6px;justify-content:flex-end;}
+.silo-color-bar{height:4px;}
+.silo-section-lbl{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:8px;}
+/* Color accents for silos */
+.sc-blue .silo-color-bar{background:var(--accent);}
+.sc-green .silo-color-bar{background:var(--green);}
+.sc-purple .silo-color-bar{background:var(--purple);}
+.sc-amber .silo-color-bar{background:var(--amber);}
+.sc-teal .silo-color-bar{background:var(--teal);}
+.sc-pink .silo-color-bar{background:var(--pink);}
+.sc-red .silo-color-bar{background:var(--red);}
+.sc-blue .silo-name{color:var(--accent);}
+.sc-green .silo-name{color:var(--green);}
+.sc-purple .silo-name{color:var(--purple);}
+.sc-amber .silo-name{color:var(--amber);}
+.sc-teal .silo-name{color:var(--teal);}
+.sc-pink .silo-name{color:var(--pink);}
+.sc-red .silo-name{color:var(--red);}
+
+@media(max-width:900px){
+  .g2,.g3,.g4{grid-template-columns:1fr;}
+  .form-grid.g2,.form-grid.g3,.form-grid.g4{grid-template-columns:1fr 1fr;}
+  .snap-kpi-row{grid-template-columns:repeat(3,1fr);}
+  .page{padding:16px;}
+  .silo-grid{grid-template-columns:1fr;}
+  .silo-kpis{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="brand">
+    <div class="brand-mark">TIE</div>
+    <div>ResourcIQ <span class="brand-sub">The Impact Engine</span></div>
+  </div>
+  <div class="nav-tab active" onclick="goTab('dashboard',this)">Dashboard</div>
+  <div class="nav-tab" onclick="goTab('team',this)">Team <span class="tab-count" id="tc-team">0</span></div>
+  <div class="nav-tab" onclick="goTab('clients',this)">Clients <span class="tab-count" id="tc-clients">0</span></div>
+  <div class="nav-tab" onclick="goTab('projects',this)">Projects <span class="tab-count" id="tc-projects">0</span></div>
+  <div class="nav-tab" onclick="goTab('silos',this)">Silos <span class="tab-count" id="tc-silos">0</span></div>
+  <div class="nav-tab" onclick="goTab('hours',this)">Hour Logs</div>
+  <div class="nav-tab" onclick="goTab('costs',this)">Cost Analysis</div>
+</nav>
+
+<!-- ═══════════════════════════════════════════ DASHBOARD ══ -->
+<div class="page active" id="page-dashboard">
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <div class="page-title">Resource Overview</div>
+      <div class="page-sub">The Impact Engine — Resource & Cost Intelligence</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost btn-sm" onclick="openModal('modal-log')">+ Log Hours</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-project')">+ New Project</button>
+    </div>
+  </div>
+  <div class="stats-row" id="dash-stats"></div>
+  <div class="g2" style="margin-bottom:16px;">
+    <div class="card"><div class="card-title">Project Cost vs Budget</div><div id="dash-proj-costs"></div></div>
+    <div class="card"><div class="card-title">Team Utilisation (Hours/Month)</div><div id="dash-util"></div></div>
+  </div>
+  <div class="card">
+    <div class="section-hdr"><div class="section-title">Active Projects — Snapshot</div></div>
+    <div class="tbl-wrap" style="border:none;border-radius:0;">
+      <table id="dash-proj-table">
+        <thead><tr><th>Project / Client</th><th>Team Size</th><th>Hours/Mo</th><th>Project Cost</th><th>Retainer</th><th>Margin</th><th>Margin %</th><th>Status</th></tr></thead>
+        <tbody id="dash-proj-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ TEAM ══ -->
+<div class="page" id="page-team">
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <div class="page-title">Team Members</div>
+      <div class="page-sub">46 members · 9 departments · 176 hrs/month standard</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost btn-sm" onclick="resetMemberModal();openModal('modal-member')">+ Add Member</button>
+    </div>
+  </div>
+  <div class="filter-row" id="team-dept-filters"></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Name</th><th>Department</th><th>Position</th><th>Monthly Salary</th><th>Base Pay / hr</th><th>Hours/mo</th><th>Projects Assigned</th><th>Hrs Allocated</th><th>Available Hrs</th><th></th></tr></thead>
+      <tbody id="team-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ CLIENTS ══ -->
+<div class="page" id="page-clients">
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <div class="page-title">Clients</div>
+      <div class="page-sub">Retainer amounts and linked projects</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="openModal('modal-client')">+ Add Client</button>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Client Name</th><th>Services</th><th>Monthly Retainer</th><th>Projects</th><th>Total Team Cost</th><th>Margin</th><th>Margin %</th><th></th></tr></thead>
+      <tbody id="clients-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ PROJECTS ══ -->
+<div class="page" id="page-projects">
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <div class="page-title">Projects</div>
+      <div class="page-sub">Team allocations, cost snapshots and profitability per project</div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openModal('modal-project')">+ New Project</button>
+  </div>
+  <div id="proj-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════ SILOS ══ -->
+<div class="page" id="page-silos">
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <div class="page-title">Silos</div>
+      <div class="page-sub">Dedicated cross-functional teams permanently assigned to a fixed set of clients</div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openModal('modal-silo')">+ Create Silo</button>
+  </div>
+  <div class="stats-row" id="silo-stats"></div>
+  <div class="silo-grid" id="silo-grid"></div>
+</div>
+
+
+<div class="page" id="page-hours">
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <div class="page-title">Hour Logs</div>
+      <div class="page-sub">Track actual hours per employee per project</div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openModal('modal-log')">+ Log Hours</button>
+  </div>
+  <div class="filter-row">
+    <select id="hr-filter-proj" onchange="renderHours()"><option value="">All Projects</option></select>
+    <select id="hr-filter-emp" onchange="renderHours()"><option value="">All Members</option></select>
+    <select id="hr-filter-month" onchange="renderHours()"><option value="">All Months</option></select>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Date</th><th>Member</th><th>Department</th><th>Project</th><th>Hours</th><th>Rate / hr</th><th>Cost</th><th>Notes</th><th></th></tr></thead>
+      <tbody id="hours-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ COSTS ══ -->
+<div class="page" id="page-costs">
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <div class="page-title">Cost Analysis</div>
+      <div class="page-sub">Detailed profitability breakdown by project, department and member</div>
+    </div>
+  </div>
+  <div class="filter-row">
+    <select id="cost-proj-filter" onchange="renderCosts()"><option value="">All Projects</option></select>
+  </div>
+  <div class="stats-row" id="cost-stats"></div>
+  <div class="g2" style="margin-bottom:14px;">
+    <div class="card"><div class="card-title">Cost by Member</div><div id="cost-by-member"></div></div>
+    <div class="card"><div class="card-title">Cost by Department</div><div id="cost-by-dept"></div></div>
+  </div>
+  <div class="card"><div class="card-title">Cost by Project</div><div id="cost-by-proj"></div></div>
+</div>
+
+<!-- ══════════════════════════ MODALS ══════════════════════════ -->
+
+<!-- Add / Edit Member -->
+<div class="overlay" id="modal-member">
+  <div class="modal modal-md">
+    <input type="hidden" id="m-edit-id" value="">
+    <div class="modal-title" id="m-modal-title">Add Team Member</div>
+    <div class="form-grid g2">
+      <div class="form-field"><label>Full Name</label><input id="m-name" placeholder="e.g. Priya Sharma"></div>
+      <div class="form-field"><label>Monthly Salary (₹)</label><input id="m-salary" type="number" placeholder="e.g. 35000"></div>
+    </div>
+    <div class="form-grid g2">
+      <div class="form-field"><label>Department</label>
+        <select id="m-dept">
+          <option>Account Management Team</option><option>Ads Team</option><option>Content Team</option>
+          <option>Creative Team</option><option>HR & Admin Team</option><option>SEO Team</option>
+          <option>Social Media Team</option><option>Tech Team</option><option>Video Team</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Position / Role</label><input id="m-pos" placeholder="e.g. Senior Project Manager"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-member')">Cancel</button>
+      <button class="btn btn-primary" id="m-save-btn" onclick="addMember()">Add Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add / Edit Client -->
+<div class="overlay" id="modal-client">
+  <div class="modal modal-md">
+    <input type="hidden" id="cl-edit-id" value="">
+    <div class="modal-title" id="cl-modal-title">Add Client</div>
+    <div class="form-grid g2">
+      <div class="form-field"><label>Client Name</label><input id="cl-name" placeholder="e.g. Sheraton Grand Pune"></div>
+      <div class="form-field"><label>Monthly Retainer (₹)</label><input id="cl-retainer" type="number" placeholder="e.g. 99000"></div>
+    </div>
+    <div class="form-field" style="margin-bottom:12px;">
+      <label style="font-size:11.5px;font-weight:500;color:var(--text2);display:block;margin-bottom:6px;">Services Offered</label>
+      <div id="cl-services-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px;max-height:180px;overflow-y:auto;padding:8px;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg);"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-client')">Cancel</button>
+      <button class="btn btn-primary" id="cl-save-btn" onclick="addClient()">Add Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- New / Edit Project -->
+<div class="overlay" id="modal-project">
+  <div class="modal modal-lg">
+    <input type="hidden" id="p-edit-id" value="">
+    <div class="modal-title" id="p-modal-title">New Project</div>
+    <div class="form-grid g2">
+      <div class="form-field"><label>Project Name</label><input id="p-name" placeholder="e.g. Sheraton Grand Pune — March"></div>
+      <div class="form-field"><label>Client</label>
+        <select id="p-client"><option value="">— Select Client —</option></select>
+      </div>
+    </div>
+    <div class="form-grid g3">
+      <div class="form-field"><label>Month</label>
+        <select id="p-month">
+          <option>January</option><option>February</option><option selected>March</option>
+          <option>April</option><option>May</option><option>June</option>
+          <option>July</option><option>August</option><option>September</option>
+          <option>October</option><option>November</option><option>December</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Year</label><input id="p-year" type="number" value="2025"></div>
+      <div class="form-field"><label>Status</label>
+        <select id="p-status"><option>Active</option><option>On Hold</option><option>Completed</option><option>Planning</option></select>
+      </div>
+    </div>
+    <div class="form-grid" style="grid-template-columns:1fr;">
+      <div class="form-field"><label>Retainer / Budget Override (₹) — leave blank to use client retainer</label>
+        <input id="p-budget" type="number" placeholder="Leave blank to inherit from client">
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="section-hdr"><div class="section-title">Assign Team Members</div><button class="btn btn-ghost btn-sm" onclick="addAllocRow()">+ Add Row</button></div>
+    <div id="alloc-rows"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-project')">Cancel</button>
+      <button class="btn btn-primary" id="p-save-btn" onclick="saveProject()">Create Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- Log Hours -->
+<div class="overlay" id="modal-log">
+  <div class="modal modal-sm">
+    <div class="modal-title">Log Hours</div>
+    <div class="form-grid g2">
+      <div class="form-field"><label>Member</label><select id="lg-member"></select></div>
+      <div class="form-field"><label>Project</label><select id="lg-project"></select></div>
+    </div>
+    <div class="form-grid g2">
+      <div class="form-field"><label>Date</label><input id="lg-date" type="date"></div>
+      <div class="form-field"><label>Hours</label><input id="lg-hours" type="number" placeholder="e.g. 8" step="0.5" min="0.5"></div>
+    </div>
+    <div class="form-grid" style="grid-template-columns:1fr;">
+      <div class="form-field"><label>Notes (optional)</label><input id="lg-notes" placeholder="e.g. Strategy deck, client call…"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-log')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLog()">Save Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create / Edit Silo -->
+<div class="overlay" id="modal-silo">
+  <div class="modal modal-lg">
+    <div class="modal-title" id="silo-modal-title">Create Silo</div>
+    <input type="hidden" id="silo-edit-id" value="">
+    <div class="form-grid g2">
+      <div class="form-field"><label>Silo Name</label><input id="s-name" placeholder="e.g. Hospitality Silo"></div>
+      <div class="form-field"><label>Silo Lead (Account Manager)</label>
+        <select id="s-lead"><option value="">— Select Lead —</option></select>
+      </div>
+    </div>
+    <div class="form-grid g2">
+      <div class="form-field"><label>Colour Theme</label>
+        <select id="s-color">
+          <option value="blue">Blue</option><option value="green">Green</option>
+          <option value="purple">Purple</option><option value="amber">Amber</option>
+          <option value="teal">Teal</option><option value="pink">Pink</option>
+          <option value="red">Red</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Focus / Description</label>
+        <input id="s-desc" placeholder="e.g. Hotels, F&B, Luxury Brands">
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="section-hdr"><div class="section-title">Team Members</div><span class="xs muted">Pick members permanently assigned to this silo</span></div>
+    <div id="s-members-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;margin-bottom:16px;max-height:260px;overflow-y:auto;padding:2px;"></div>
+    <hr class="divider">
+    <div class="section-hdr"><div class="section-title">Assigned Clients</div><span class="xs muted">Clients this silo is responsible for</span></div>
+    <div id="s-clients-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;margin-bottom:4px;max-height:200px;overflow-y:auto;padding:2px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-silo')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSilo()">Save Silo</button>
+    </div>
+  </div>
+</div>
+
+<!-- Silo Detail Modal -->
+<div class="overlay" id="modal-silo-detail">
+  <div class="modal modal-xl">
+    <div id="silo-detail-content"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-silo-detail')">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="overlay" id="modal-snap">
+  <div class="modal modal-xl">
+    <div id="snap-content"></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-snap')">Close</button></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CONSTANTS & DATA
+// ══════════════════════════════════════════════════════════
+const HOURS_MONTH = 176;
+
+const DEPT_META = {
+  'Account Management Team':{short:'AMT',color:'blue',cls:'dept-acc'},
+  'Ads Team':{short:'ADS',color:'purple',cls:'dept-ads'},
+  'Content Team':{short:'CNT',color:'teal',cls:'dept-cnt'},
+  'Creative Team':{short:'CRE',color:'pink',cls:'dept-cre'},
+  'HR & Admin Team':{short:'HR',color:'gray',cls:'dept-hr'},
+  'SEO Team':{short:'SEO',color:'amber',cls:'dept-seo'},
+  'Social Media Team':{short:'SMT',color:'green',cls:'dept-soc'},
+  'Tech Team':{short:'TEC',color:'blue',cls:'dept-tec'},
+  'Video Team':{short:'VID',color:'red',cls:'dept-vid'},
+};
+
+const AV_COLORS = [
+  '#1e40af','#6d28d9','#0f766e','#be185d','#b45309',
+  '#15803d','#b91c1c','#0369a1','#7c2d12','#1d4ed8',
+];
+
+const SEED_TEAM = [
+  {id:1,name:'Aditi Kamath',dept:'Account Management Team',pos:'Senior Project Manager',salary:50000},
+  {id:2,name:'Sejal Dadlani',dept:'Account Management Team',pos:'Senior Project Manager',salary:42000},
+  {id:3,name:'Kunal Mathur',dept:'Account Management Team',pos:'Junior Project Manager',salary:16000},
+  {id:4,name:'Bharti Kumari',dept:'Account Management Team',pos:'Junior Project Manager',salary:30000},
+  {id:5,name:'Jennifer Anthony',dept:'Account Management Team',pos:'Senior Project Manager',salary:35000},
+  {id:6,name:'Quyna Bose',dept:'Account Management Team',pos:'Senior Project Manager',salary:30000},
+  {id:7,name:'Nikhil Tiwari',dept:'Ads Team',pos:'Senior Ads Manager',salary:24000},
+  {id:8,name:'Nidhi Agrawal',dept:'Ads Team',pos:'Senior Ads Manager',salary:70000},
+  {id:9,name:'Harekrishna Das',dept:'Tech Team',pos:'Web Designer',salary:19000},
+  {id:10,name:'Mighiran Gandhirajan',dept:'Ads Team',pos:'Junior Ads Manager',salary:25000},
+  {id:11,name:'Janvi Goswami',dept:'Ads Team',pos:'Junior Ads Manager',salary:35000},
+  {id:12,name:'Suvalakshmi Sinha',dept:'Content Team',pos:'Senior Content Writer',salary:25000},
+  {id:13,name:'Janhavi Patil',dept:'Content Team',pos:'Senior Content Writer',salary:25000},
+  {id:14,name:'Janice George',dept:'Creative Team',pos:'Senior Graphic Designer',salary:33000},
+  {id:15,name:'Janhavi Khatri',dept:'Creative Team',pos:'UI/UX Designer - Website Dev',salary:27000},
+  {id:16,name:'Digambar Patil',dept:'Creative Team',pos:'UI/UX Designer - Website Dev',salary:30000},
+  {id:17,name:'Anisha Jain',dept:'Creative Team',pos:'Junior Graphic Designer',salary:40000},
+  {id:18,name:'Soham Patil',dept:'Creative Team',pos:'Senior Graphic Designer',salary:40000},
+  {id:19,name:'Elroy Abhijit Ohol',dept:'Creative Team',pos:'Junior Graphic Designer',salary:23000},
+  {id:20,name:'Sayujatta Lagad',dept:'Creative Team',pos:'Junior Graphic Designer',salary:23000},
+  {id:21,name:'Tejas Batra',dept:'Creative Team',pos:'Junior Graphic Designer',salary:22000},
+  {id:22,name:'Aditiayshariya Dash',dept:'Creative Team',pos:'Junior Graphic Designer',salary:21000},
+  {id:23,name:'Soha Thekedar',dept:'Creative Team',pos:'Senior Creative Strategist',salary:55000},
+  {id:24,name:'Ananya Rakshit',dept:'Creative Team',pos:'Graphic Designer',salary:32000},
+  {id:25,name:'Rachana Jadhav',dept:'Creative Team',pos:'Junior Creative Strategist',salary:33000},
+  {id:26,name:'Aadil Ansari',dept:'Creative Team',pos:'Senior Graphic Designer',salary:30000},
+  {id:27,name:'G U Sree Sai Anchenna',dept:'Creative Team',pos:'Junior Graphic Designer',salary:25000},
+  {id:28,name:'Sanu Alcon',dept:'Creative Team',pos:'Junior Graphic Designer',salary:25000},
+  {id:29,name:'Atharva Bhalerao',dept:'HR & Admin Team',pos:'Intern',salary:10000},
+  {id:30,name:'Anas R Kazi',dept:'SEO Team',pos:'Senior SEO Specialist',salary:25000},
+  {id:31,name:'Suhasi Bawari',dept:'Social Media Team',pos:'Senior Social Media Manager',salary:40000},
+  {id:32,name:'Arya Dhamande',dept:'Social Media Team',pos:'Junior Social Media Manager',salary:35000},
+  {id:33,name:'Arya Jadhav',dept:'Social Media Team',pos:'Junior Social Media Manager',salary:26000},
+  {id:34,name:'Surabhi Yerawar',dept:'Social Media Team',pos:'Junior Social Media Manager',salary:40000},
+  {id:35,name:'Karan Ahuja',dept:'Social Media Team',pos:'Junior Social Media Manager',salary:35000},
+  {id:36,name:'Siddhesh Panajkar',dept:'Tech Team',pos:'Junior Developer',salary:20000},
+  {id:37,name:'Mahesh Wagh',dept:'Tech Team',pos:'Junior Developer',salary:20000},
+  {id:38,name:'Tarush Mishra',dept:'Video Team',pos:'Senior Video Editor',salary:27000},
+  {id:39,name:'Jidnyesh Dhuri',dept:'Video Team',pos:'Senior Video Editor',salary:30000},
+  {id:40,name:'Shikhar Singh',dept:'Video Team',pos:'Junior Video Editor',salary:18000},
+  {id:41,name:'Gaurav Amte',dept:'Video Team',pos:'Junior Video Editor',salary:24000},
+  {id:42,name:'Ritika Dube',dept:'HR & Admin Team',pos:'Management - Admin, OPS, HR',salary:20000},
+  {id:43,name:'Aayush Gandhi',dept:'Video Team',pos:'Videographer',salary:30000},
+  {id:44,name:'Neha Vadhariya',dept:'HR & Admin Team',pos:'Management - Admin, OPS, HR',salary:30000},
+  {id:45,name:'Adwaitha Haridas',dept:'HR & Admin Team',pos:'Management - Admin, OPS, HR',salary:10000},
+  {id:46,name:'Divya Setiya',dept:'HR & Admin Team',pos:'Management - Admin, OPS, HR',salary:35000},
+  {id:47,name:'Parv Jain',dept:'Content Team',pos:'Content Writer',salary:0},
+  {id:48,name:'Samriddhi Mehan',dept:'Content Team',pos:'Content Writer',salary:0},
+  {id:49,name:'Vishruti Bhajane',dept:'Social Media Team',pos:'Junior Social Media Manager',salary:0},
+  {id:50,name:'Awesh Shah',dept:'Video Team',pos:'Motion Designer',salary:0},
+  {id:51,name:'Omraje Tathe',dept:'Video Team',pos:'Video Editor',salary:0},
+  {id:52,name:'Soham Chabukswar',dept:'SEO Team',pos:'SEO Specialist',salary:0},
+];
+SEED_TEAM.forEach(m=>{ m.rate = Math.round(m.salary / HOURS_MONTH); });
+
+const SEED_CLIENTS = [
+  {id:1,name:"Aeka's Coffee",services:'Social Media Management',retainer:0},
+  {id:2,name:'Aharaa',services:'Social Media Management',retainer:35000},
+  {id:3,name:'B For Burger',services:'Social Media Management',retainer:35000},
+  {id:4,name:'Elephant & Co.',services:'Branding & Designing',retainer:200000},
+  {id:5,name:'Elixir Helps',services:'Social Media Management',retainer:20000},
+  {id:6,name:'BeforeU Care',services:'Social Media Management',retainer:70000},
+  {id:7,name:'Copper Chocs',services:'Social Media, SEO & GMB Management',retainer:55000},
+  {id:8,name:'Conrad Pune',services:'Social Media Management & Branding',retainer:236000},
+  {id:9,name:'Dewaxify London',services:'SEO Management & Meta Ads Management',retainer:60000},
+  {id:10,name:'Filament Bar',services:'Social Media Management',retainer:35000},
+  {id:11,name:'HKB Ventures - Casa Heritage',services:'Social Media Management',retainer:35000},
+  {id:12,name:'HKB Ventures - Anantya Homes',services:'Social Media Management',retainer:25000},
+  {id:13,name:'HKB Ventures - Sai Basant',services:'Social Media Management',retainer:15000},
+  {id:14,name:'iCraft',services:'Social Media & Website & SEO Management',retainer:57000},
+  {id:15,name:'Kanchoco',services:'Social Media Management',retainer:40000},
+  {id:16,name:'Milk Station',services:'Social Media Management',retainer:75000},
+  {id:17,name:'Monginis',services:'Social Media Management & WhatsApp Marketing',retainer:79551},
+  {id:18,name:'Monika Alcobev',services:'Social Media Management',retainer:65000},
+  {id:19,name:'Licor 43 Liquor',services:'Social Media Management',retainer:60000},
+  {id:20,name:'Nikai',services:'Social Media Management & Performance Marketing',retainer:45000},
+  {id:21,name:"Pete's Pure",services:'Social Media Management',retainer:52396},
+  {id:22,name:'Premier Lifestyle Beauty',services:'Social Media Management & Strategy',retainer:30000},
+  {id:23,name:'Pushpam Group — Pucham Sanckruti, Karjat',services:'Social Media Management & Branding',retainer:65000},
+  {id:24,name:'SB Patil Group',services:'Social Media Management & Branding',retainer:62000},
+  {id:25,name:'Sheraton Grand Pune',services:'Social Media Management & Branding',retainer:99000},
+  {id:26,name:'Sun City Tours and Travel',services:'Social Media Management',retainer:35000},
+  {id:27,name:'TajSats',services:'Email Creatives',retainer:15000},
+  {id:28,name:'Thakorji Thaal',services:'Social Media Management',retainer:35000},
+  {id:29,name:'The Bark Hotel',services:'Social Media Management',retainer:35000},
+  {id:30,name:'Treelarn',services:'Performance Marketing & WhatsApp Marketing',retainer:32000},
+  {id:31,name:'Warm Gloves Cafe',services:'Performance Marketing & GMB SEO',retainer:83000},
+  {id:32,name:'ITC WelcomHotel, Jodhpur',services:'Photoshoots',retainer:24000},
+  {id:33,name:'Hotel Diplomat',services:'Social Media Management',retainer:0},
+  {id:34,name:'Naiknavare',services:'Social Media Management & Content',retainer:0},
+  {id:35,name:'Radisson',services:'Performance Marketing',retainer:0},
+  {id:36,name:'ICJ',services:'Social Media Management & SEO',retainer:0},
+  {id:37,name:'HireSprint',services:'UI/UX Design',retainer:0},
+  {id:38,name:'Sydney Decors',services:'Web Design & UI/UX',retainer:0},
+  {id:39,name:'Lucasta',services:'Web Development & UI/UX',retainer:0},
+  {id:40,name:'Monkey Movement',services:'SEO Management',retainer:0},
+  {id:41,name:'Revny Wellness',services:'Social Media Management & SEO',retainer:0},
+  {id:42,name:'Rawal Rice',services:'SEO Management',retainer:0},
+  {id:43,name:'Petit Paris',services:'SEO Management',retainer:0},
+  {id:44,name:'Binisha',services:'Social Media Management & Web Development',retainer:0},
+  {id:45,name:'ECO',services:'Social Media Management',retainer:0},
+  {id:46,name:'The Boho House',services:'Video Production & Content Writing',retainer:0},
+  {id:47,name:'Spicy Table Bites',services:'Performance Marketing',retainer:0},
+  {id:48,name:'Powerpoint Co',services:'Web Design & SEO',retainer:0},
+  {id:49,name:'The Healthy World',services:'Social Media Management & Content Writing',retainer:0},
+  {id:50,name:'TIE (Internal)',services:'Web Development, SEO & Content',retainer:0},
+  {id:51,name:'TIE Creds (Internal)',services:'Strategy & Creative',retainer:0},
+  {id:52,name:'Masqa',services:'Social Media Management & SEO',retainer:0},
+  {id:53,name:'Cafe Vianna',services:'Social Media Management & Performance Marketing',retainer:0},
+];
+SEED_CLIENTS.forEach((c,i)=>{ c.id = i+1; });
+
+const SEED_PROJECTS = [
+  {id:1,name:'Sheraton Grand Pune — March',clientId:25,month:'March',year:2025,budgetOverride:99000,status:'Active',
+   allocations:[{memberId:4,role:'Brand Strategist',hoursPerDay:2},{memberId:35,role:'Social Media Manager',hoursPerDay:2},{memberId:8,role:'Ads Manager',hoursPerDay:2},{memberId:13,role:'Content Writer',hoursPerDay:2},{memberId:38,role:'Video Editor',hoursPerDay:2}]},
+  {id:2,name:"Aeka's Coffee — March",clientId:1,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:32,role:'Social Media Manager',hoursPerDay:2},{memberId:23,role:'Account Manager',hoursPerDay:2}]},
+  {id:3,name:'Aharaa — March',clientId:2,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:34,role:'Social Media Manager',hoursPerDay:2},{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:7,role:'Ads Manager',hoursPerDay:2},{memberId:40,role:'Video Editor',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2},{memberId:12,role:'Content Writer',hoursPerDay:2}]},
+  {id:4,name:'B For Burger — March',clientId:3,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:49,role:'Social Media Manager',hoursPerDay:2},{memberId:23,role:'Account Manager',hoursPerDay:2},{memberId:8,role:'Ads Manager',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2},{memberId:12,role:'Content Writer',hoursPerDay:2}]},
+  {id:5,name:'Elixir Helps — March',clientId:5,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:9,role:'Web Designer',hoursPerDay:2},{memberId:16,role:'UI/UX Designer',hoursPerDay:2},{memberId:15,role:'UI/UX Designer',hoursPerDay:2},{memberId:30,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:6,name:'BeforeU Care — March',clientId:6,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:4,role:'Brand Strategist',hoursPerDay:2},{memberId:23,role:'Account Manager',hoursPerDay:2},{memberId:10,role:'Ads Manager',hoursPerDay:2},{memberId:40,role:'Video Editor',hoursPerDay:2},{memberId:48,role:'Content Writer',hoursPerDay:2}]},
+  {id:7,name:'Copper Chocs — March',clientId:7,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:4,role:'Brand Strategist',hoursPerDay:2},{memberId:7,role:'Ads Manager',hoursPerDay:2},{memberId:50,role:'Motion Designer',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:8,name:'Conrad Pune — March',clientId:8,month:'March',year:2025,budgetOverride:236000,status:'Active',
+   allocations:[{memberId:1,role:'Project Manager',hoursPerDay:2},{memberId:31,role:'Social Media Manager',hoursPerDay:2},{memberId:8,role:'Ads Manager',hoursPerDay:2},{memberId:39,role:'Video Editor',hoursPerDay:2},{memberId:12,role:'Content Writer',hoursPerDay:2}]},
+  {id:9,name:'Dewaxify London — March',clientId:9,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:30,role:'SEO Specialist',hoursPerDay:2},{memberId:47,role:'Content Writer',hoursPerDay:2}]},
+  {id:10,name:'Filament Bar — March',clientId:10,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:23,role:'Account Manager',hoursPerDay:2},{memberId:33,role:'Social Media Manager',hoursPerDay:2},{memberId:8,role:'Ads Manager',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2},{memberId:13,role:'Content Writer',hoursPerDay:2},{memberId:29,role:'AM Intern',hoursPerDay:2}]},
+  {id:11,name:'HKB Ventures (Casa Heritage) — March',clientId:11,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:33,role:'Social Media Manager',hoursPerDay:2},{memberId:8,role:'Ads Manager',hoursPerDay:2},{memberId:16,role:'UI/UX Designer',hoursPerDay:2},{memberId:51,role:'Video Editor',hoursPerDay:2},{memberId:48,role:'Content Writer',hoursPerDay:2}]},
+  {id:12,name:'HKB Ventures (Anantya Homes) — March',clientId:12,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:48,role:'Content Writer',hoursPerDay:2}]},
+  {id:13,name:'HKB Ventures (Sai Basant) — March',clientId:13,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:25,role:'Account Manager',hoursPerDay:2}]},
+  {id:14,name:'iCraft — March',clientId:14,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:31,role:'Social Media Manager',hoursPerDay:2},{memberId:7,role:'Ads Manager',hoursPerDay:2},{memberId:9,role:'Web Designer',hoursPerDay:2},{memberId:16,role:'UI/UX Designer',hoursPerDay:2},{memberId:15,role:'UI/UX Designer',hoursPerDay:2},{memberId:30,role:'SEO Specialist',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2},{memberId:50,role:'Motion Designer',hoursPerDay:2},{memberId:47,role:'Content Writer',hoursPerDay:2}]},
+  {id:15,name:'Kanchoco — March',clientId:15,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:32,role:'Social Media Manager',hoursPerDay:2},{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:10,role:'Ads Manager Intern',hoursPerDay:2},{memberId:38,role:'Video Editor',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:16,name:'Milk Station — March',clientId:16,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:35,role:'Social Media Manager',hoursPerDay:2},{memberId:51,role:'Video Editor',hoursPerDay:2}]},
+  {id:17,name:'Monginis — March',clientId:17,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:32,role:'Social Media Manager',hoursPerDay:2},{memberId:23,role:'Account Manager',hoursPerDay:2},{memberId:7,role:'Ads Manager',hoursPerDay:2},{memberId:38,role:'Video Editor',hoursPerDay:2}]},
+  {id:18,name:'Monika Alcobev — March',clientId:18,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:5,role:'Project Manager',hoursPerDay:2},{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:8,role:'Ads Manager',hoursPerDay:2},{memberId:50,role:'Motion Designer',hoursPerDay:2},{memberId:48,role:'Content Writer',hoursPerDay:2},{memberId:29,role:'AM Intern',hoursPerDay:2}]},
+  {id:19,name:'Licor 43 — March',clientId:19,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:5,role:'Project Manager',hoursPerDay:2},{memberId:23,role:'Account Manager',hoursPerDay:2},{memberId:8,role:'Ads Manager',hoursPerDay:2},{memberId:50,role:'Motion Designer',hoursPerDay:2},{memberId:12,role:'Content Writer',hoursPerDay:2},{memberId:29,role:'AM Intern',hoursPerDay:2}]},
+  {id:20,name:'Nikai — March',clientId:20,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:1,role:'Project Manager',hoursPerDay:2},{memberId:23,role:'Account Manager',hoursPerDay:2},{memberId:41,role:'Video Editor',hoursPerDay:2},{memberId:48,role:'Content Writer',hoursPerDay:2}]},
+  {id:21,name:"Pete's Pure — March",clientId:21,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:5,role:'Project Manager',hoursPerDay:2},{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:11,role:'Ads Manager',hoursPerDay:2},{memberId:38,role:'Video Editor',hoursPerDay:2},{memberId:50,role:'Motion Designer',hoursPerDay:2}]},
+  {id:22,name:'Premier Lifestyle — March',clientId:22,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:5,role:'Project Manager',hoursPerDay:2},{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:41,role:'Video Editor',hoursPerDay:2},{memberId:48,role:'Content Writer',hoursPerDay:2},{memberId:29,role:'AM Intern',hoursPerDay:2}]},
+  {id:23,name:'SB Patil Group — March',clientId:24,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:7,role:'Ads Manager',hoursPerDay:2},{memberId:41,role:'Video Editor',hoursPerDay:2},{memberId:13,role:'Content Writer',hoursPerDay:2},{memberId:47,role:'Content Writer (Blogs)',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2},{memberId:29,role:'AM Intern',hoursPerDay:2}]},
+  {id:24,name:'Sun City Tours — March',clientId:26,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:49,role:'Social Media Manager',hoursPerDay:2},{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:36,role:'Web Designer',hoursPerDay:2},{memberId:16,role:'UI/UX Designer',hoursPerDay:2},{memberId:15,role:'UI/UX Designer',hoursPerDay:2},{memberId:30,role:'SEO Specialist',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2},{memberId:51,role:'Video Editor',hoursPerDay:2},{memberId:48,role:'Content Writer',hoursPerDay:2}]},
+  {id:25,name:'Thakorji Thaal — March',clientId:28,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:34,role:'Social Media Manager',hoursPerDay:2},{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:11,role:'Ads Manager',hoursPerDay:2},{memberId:47,role:'Content Writer',hoursPerDay:2},{memberId:41,role:'Video Editor',hoursPerDay:2},{memberId:30,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:26,name:'The Bark Hotel — March',clientId:29,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:33,role:'Social Media Manager',hoursPerDay:2},{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:8,role:'Ads Manager',hoursPerDay:2},{memberId:40,role:'Video Editor',hoursPerDay:2},{memberId:12,role:'Content Writer',hoursPerDay:2}]},
+  {id:27,name:'Treelarn — March',clientId:30,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:36,role:'Web Developer',hoursPerDay:2},{memberId:7,role:'Ads Manager',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2},{memberId:13,role:'Content Writer',hoursPerDay:2}]},
+  {id:28,name:'Warm Gloves Cafe — March',clientId:31,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:8,role:'Ads Manager',hoursPerDay:2},{memberId:30,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:29,name:'Hotel Diplomat — March',clientId:33,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:33,role:'Social Media Manager',hoursPerDay:2},{memberId:40,role:'Video Editor',hoursPerDay:2}]},
+  {id:30,name:'Naiknavare — March',clientId:34,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:23,role:'Account Manager',hoursPerDay:2},{memberId:34,role:'Social Media Manager',hoursPerDay:2},{memberId:48,role:'Content Writer',hoursPerDay:2},{memberId:51,role:'Video Editor',hoursPerDay:2}]},
+  {id:31,name:'Radisson — March',clientId:35,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:8,role:'Ads Manager',hoursPerDay:2}]},
+  {id:32,name:'ICJ — March',clientId:36,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:35,role:'Social Media Manager',hoursPerDay:2},{memberId:30,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:33,name:'HireSprint — March',clientId:37,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:16,role:'UI/UX Designer',hoursPerDay:2}]},
+  {id:34,name:'Sydney Decors — March',clientId:38,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:36,role:'Web Designer',hoursPerDay:2},{memberId:16,role:'UI/UX Designer',hoursPerDay:2}]},
+  {id:35,name:'Lucasta — March',clientId:39,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:36,role:'Web Developer',hoursPerDay:2},{memberId:16,role:'UI/UX Designer',hoursPerDay:2}]},
+  {id:36,name:'Monkey Movement — March',clientId:40,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:30,role:'SEO Specialist',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:37,name:'Revny Wellness — March',clientId:41,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:33,role:'Social Media Manager',hoursPerDay:2},{memberId:30,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:38,name:'Rawal Rice — March',clientId:42,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:30,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:39,name:'Petit Paris — March',clientId:43,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:30,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:40,name:'Binisha — March',clientId:44,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:2,role:'Project Manager',hoursPerDay:2},{memberId:36,role:'Web Developer',hoursPerDay:2}]},
+  {id:41,name:'ECO — March',clientId:45,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:2,role:'Project Manager',hoursPerDay:2}]},
+  {id:42,name:'The Boho House — March',clientId:46,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:38,role:'Video Editor',hoursPerDay:2},{memberId:13,role:'Content Writer',hoursPerDay:2}]},
+  {id:43,name:'Spicy Table Bites — March',clientId:47,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:11,role:'Ads Manager',hoursPerDay:2}]},
+  {id:44,name:'Powerpoint Co — March',clientId:48,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:9,role:'Web Designer',hoursPerDay:2},{memberId:30,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:45,name:'The Healthy World — March',clientId:49,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:25,role:'Account Manager',hoursPerDay:2},{memberId:4,role:'Brand Strategist',hoursPerDay:2},{memberId:13,role:'Content Writer',hoursPerDay:2}]},
+  {id:46,name:'TIE Internal — March',clientId:50,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:6,role:'Project Manager',hoursPerDay:2},{memberId:37,role:'Web Developer',hoursPerDay:2},{memberId:15,role:'UI/UX Designer',hoursPerDay:2},{memberId:30,role:'SEO Specialist',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2},{memberId:47,role:'Content Writer',hoursPerDay:2}]},
+  {id:47,name:'TIE Creds — March',clientId:51,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:23,role:'Creative Strategist',hoursPerDay:2},{memberId:25,role:'Creative Strategist',hoursPerDay:2}]},
+  {id:48,name:'Masqa — March',clientId:52,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:49,role:'Social Media Manager',hoursPerDay:2},{memberId:23,role:'Account Manager',hoursPerDay:2},{memberId:36,role:'Web Designer',hoursPerDay:2},{memberId:12,role:'Content Writer',hoursPerDay:2},{memberId:52,role:'SEO Specialist',hoursPerDay:2}]},
+  {id:49,name:'Cafe Vianna — March',clientId:53,month:'March',year:2025,budgetOverride:null,status:'Active',
+   allocations:[{memberId:3,role:'Project Manager',hoursPerDay:2},{memberId:23,role:'Account Manager',hoursPerDay:2},{memberId:11,role:'Ads Manager',hoursPerDay:2},{memberId:13,role:'Content Writer',hoursPerDay:2},{memberId:51,role:'Video Editor',hoursPerDay:2}]},
+];
+
+// ══ LOAD / SAVE ══
+const DATA_VERSION = '3';
+if(localStorage.getItem('tie_version') !== DATA_VERSION){
+  localStorage.clear();
+  localStorage.setItem('tie_version', DATA_VERSION);
+}
+let team     = JSON.parse(localStorage.getItem('tie_team')     || 'null') || SEED_TEAM;
+let clients  = JSON.parse(localStorage.getItem('tie_clients')  || 'null') || SEED_CLIENTS;
+let projects = JSON.parse(localStorage.getItem('tie_projects') || 'null') || SEED_PROJECTS;
+let logs     = JSON.parse(localStorage.getItem('tie_logs')     || 'null') || [];
+
+function save(){
+  localStorage.setItem('tie_team',     JSON.stringify(team));
+  localStorage.setItem('tie_clients',  JSON.stringify(clients));
+  localStorage.setItem('tie_projects', JSON.stringify(projects));
+  localStorage.setItem('tie_logs',     JSON.stringify(logs));
+}
+
+// ══ HELPERS ══
+function byId(arr,id){ return arr.find(x=>x.id==id); }
+function nextId(arr){ return arr.length ? Math.max(...arr.map(x=>x.id))+1 : 1; }
+const inr = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const pct = (a,b) => b ? Math.round(a/b*100) : 0;
+const fh  = h => (h%1===0 ? h : h.toFixed(1))+'h';
+function avColor(id){ return AV_COLORS[id % AV_COLORS.length]; }
+function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
+
+function deptTag(dept){
+  const m = DEPT_META[dept]||{short:dept.slice(0,3).toUpperCase(),cls:'dept-hr'};
+  return `<span class="dept-tag ${m.cls}">${m.short}</span>`;
+}
+
+function av(member, size='sm'){
+  const c = avColor(member.id);
+  return `<div class="av av-${size}" style="background:${c}20;color:${c}">${initials(member.name)}</div>`;
+}
+
+// Project computed values
+function projCalc(proj){
+  const client = byId(clients, proj.clientId);
+  const retainer = proj.budgetOverride || (client ? client.retainer : 0);
+
+  // Hours per month from allocations (hoursPerDay × 22 working days)
+  let projectCost = 0;
+  const memberBreakdown = [];
+  (proj.allocations||[]).forEach(a=>{
+    const m = byId(team, a.memberId);
+    if(!m) return;
+    const hpm = +(a.hoursPerDay * 22).toFixed(1);
+    const cost = Math.round(m.rate * hpm);
+    projectCost += cost;
+    memberBreakdown.push({member:m, role:a.role, hoursPerDay:a.hoursPerDay, hoursPerMonth:hpm, cost});
+  });
+
+  // Add actual logged hours cost on top (if any)
+  const projLogs = logs.filter(l=>l.projId==proj.id);
+  let loggedCost = 0;
+  projLogs.forEach(l=>{ const m=byId(team,l.memberId); if(m) loggedCost+=m.rate*l.hours; });
+
+  const totalHours = (proj.allocations||[]).reduce((s,a)=>s+(+(a.hoursPerDay*22).toFixed(1)),0);
+  const margin = retainer - projectCost;
+  const marginPct = retainer > 0 ? Math.round(margin/retainer*100) : 0;
+
+  return {retainer,projectCost,margin,marginPct,totalHours,memberBreakdown,loggedCost,client};
+}
+
+function editProject(id){
+  const p = byId(projects,id);
+  if(!p) return;
+  populateProjModal(id);
+  document.getElementById('modal-project').classList.add('open');
+}
+
+// ══ MODAL ══
+function openModal(id){
+  if(id==='modal-silo'){ openSiloModal(); return; }
+  if(id==='modal-project') populateProjModal();
+  if(id==='modal-log') populateLogModal();
+  if(id==='modal-client') populateClientModal();
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('overlay')) e.target.classList.remove('open');
+});
+
+// ══ TAB ══
+function goTab(tab, el){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  const renders = {dashboard:renderDashboard,team:renderTeam,clients:renderClients,projects:renderProjects,hours:renderHours,costs:renderCosts};
+  if(renders[tab]) renders[tab]();
+}
+
+// ══════════════════════════════════════════════════════════
+// TEAM
+// ══════════════════════════════════════════════════════════
+let teamDeptFilter = '';
+
+function renderTeam(){
+  document.getElementById('tc-team').textContent = team.length;
+  // dept filter pills
+  const depts = [...new Set(team.map(m=>m.dept))].sort();
+  document.getElementById('team-dept-filters').innerHTML =
+    `<span class="filter-pill ${!teamDeptFilter?'active':''}" onclick="setTeamDept('')">All</span>` +
+    depts.map(d=>`<span class="filter-pill ${teamDeptFilter===d?'active':''}" onclick="setTeamDept('${d}')">${DEPT_META[d]?.short||d}</span>`).join('');
+
+  const filtered = teamDeptFilter ? team.filter(m=>m.dept===teamDeptFilter) : team;
+
+  // Allocated hours per member across all projects
+  const allocMap = {};
+  projects.forEach(p=>{
+    (p.allocations||[]).forEach(a=>{
+      if(!allocMap[a.memberId]) allocMap[a.memberId]={hours:0,projs:[]};
+      const hpm = +(a.hoursPerDay * 22).toFixed(1);
+      allocMap[a.memberId].hours += hpm;
+      allocMap[a.memberId].projs.push(p.id);
+    });
+  });
+
+  const tbody = document.getElementById('team-body');
+  tbody.innerHTML = filtered.map((m,i)=>{
+    const alloc = allocMap[m.id]||{hours:0,projs:[]};
+    const available = Math.max(0, HOURS_MONTH - alloc.hours);
+    const availPct = Math.round(available/HOURS_MONTH*100);
+    const barColor = availPct > 50 ? 'var(--green)' : availPct > 20 ? 'var(--amber)' : 'var(--red)';
+    const projBadges = alloc.projs.map(pid=>{ const p=byId(projects,pid); return p?`<span class="badge badge-blue" style="font-size:10px">${p.name.split('—')[0].trim()}</span>`:''; }).join(' ');
+    return `<tr>
+      <td class="muted xs mono">${m.id}</td>
+      <td><div style="display:flex;align-items:center;gap:9px">${av(m,'sm')}<div><div class="fw6" style="font-size:12.5px">${m.name}</div><div class="xs muted">${m.pos}</div></div></div></td>
+      <td>${deptTag(m.dept)}</td>
+      <td class="small muted">${m.pos}</td>
+      <td class="mono">${inr(m.salary)}</td>
+      <td class="mono fw6">${inr(m.rate)}</td>
+      <td class="mono">${HOURS_MONTH}h</td>
+      <td>${projBadges||'<span class="xs muted">—</span>'}</td>
+      <td class="mono">${fh(alloc.hours)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="prog" style="width:60px"><div class="prog-fill" style="width:${availPct}%;background:${barColor}"></div></div>
+          <span class="mono xs" style="color:${barColor}">${fh(available)}</span>
+        </div>
+      </td>
+      <td style="white-space:nowrap"><button class="btn btn-ghost btn-xs" style="margin-right:4px" onclick="editMember(${m.id})">Edit</button><button class="btn btn-danger btn-xs" onclick="deleteMember(${m.id})">×</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function setTeamDept(d){ teamDeptFilter=d; renderTeam(); }
+
+function addMember(){
+  const name   = document.getElementById('m-name').value.trim();
+  const salary = parseFloat(document.getElementById('m-salary').value)||0;
+  const dept   = document.getElementById('m-dept').value;
+  const pos    = document.getElementById('m-pos').value.trim();
+  const editId = parseInt(document.getElementById('m-edit-id').value)||0;
+  if(!name) return alert('Please fill in the member name.');
+  if(editId){
+    const idx = team.findIndex(m=>m.id===editId);
+    if(idx>-1){ team[idx]={...team[idx],name,salary,dept,pos,rate:Math.round(salary/HOURS_MONTH)}; }
+  } else {
+    team.push({id:nextId(team),name,salary,dept,pos,rate:Math.round(salary/HOURS_MONTH)});
+  }
+  save(); closeModal('modal-member');
+  document.getElementById('m-edit-id').value='';
+  document.getElementById('m-modal-title').textContent='Add Team Member';
+  document.getElementById('m-save-btn').textContent='Add Member';
+  ['m-name','m-salary','m-pos'].forEach(id=>document.getElementById(id).value='');
+  renderTeam();
+}
+
+function resetMemberModal(){
+  document.getElementById('m-edit-id').value='';
+  document.getElementById('m-modal-title').textContent='Add Team Member';
+  document.getElementById('m-save-btn').textContent='Add Member';
+  ['m-name','m-salary','m-pos'].forEach(id=>document.getElementById(id).value='');
+}
+
+function editMember(id){
+  const m = byId(team,id);
+  if(!m) return;
+  document.getElementById('m-edit-id').value = id;
+  document.getElementById('m-modal-title').textContent = 'Edit Team Member';
+  document.getElementById('m-save-btn').textContent = 'Update Member';
+  document.getElementById('m-name').value = m.name;
+  document.getElementById('m-salary').value = m.salary;
+  document.getElementById('m-dept').value = m.dept;
+  document.getElementById('m-pos').value = m.pos;
+  document.getElementById('modal-member').classList.add('open');
+}
+
+function deleteMember(id){
+  if(!confirm('Remove this team member?')) return;
+  team=team.filter(m=>m.id!==id); save(); renderTeam();
+}
+
+// ══════════════════════════════════════════════════════════
+// CLIENTS
+// ══════════════════════════════════════════════════════════
+function renderClients(){
+  document.getElementById('tc-clients').textContent = clients.length;
+  const tbody = document.getElementById('clients-body');
+  tbody.innerHTML = clients.map((c,i)=>{
+    const cProjs = projects.filter(p=>p.clientId==c.id);
+    let totalCost = 0;
+    cProjs.forEach(p=>{ totalCost += projCalc(p).projectCost; });
+    const margin = c.retainer - totalCost;
+    const mp = pct(margin, c.retainer);
+    const mpColor = mp>=40?'var(--green)':mp>=15?'var(--amber)':'var(--red)';
+    return `<tr>
+      <td class="muted xs mono">${i+1}</td>
+      <td class="fw6">${c.name}</td>
+      <td class="small muted" style="max-width:200px">${c.services}</td>
+      <td class="mono fw6 c-green">${c.retainer?inr(c.retainer):'<span class="muted">—</span>'}</td>
+      <td>${cProjs.map(p=>`<span class="badge badge-blue" style="font-size:10px">${p.name}</span>`).join(' ')||'<span class="xs muted">No projects</span>'}</td>
+      <td class="mono">${totalCost?inr(totalCost):'—'}</td>
+      <td class="mono" style="color:${mpColor}">${margin?inr(margin):'—'}</td>
+      <td class="mono fw6" style="color:${mpColor}">${c.retainer&&totalCost?mp+'%':'—'}</td>
+      <td style="white-space:nowrap"><button class="btn btn-ghost btn-xs" style="margin-right:4px" onclick="editClient(${c.id})">Edit</button><button class="btn btn-danger btn-xs" onclick="deleteClient(${c.id})">×</button></td>
+    </tr>`;
+  }).join('');
+}
+
+const TIE_SERVICES = [
+  'Social Media Management','Performance Marketing (Meta/Google Ads)','SEO Management',
+  'Content Writing','Branding & Design','Web Design','Web Development','UI/UX Design',
+  'Video Production & Editing','Motion Graphics','WhatsApp Marketing','GMB Management',
+  'Email Marketing','Photoshoots','Pitch Decks','Strategy & Consulting',
+];
+
+function populateClientModal(selectedServices=[]){
+  document.getElementById('cl-services-grid').innerHTML = TIE_SERVICES.map(s=>`
+    <label style="display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12px;background:var(--bg2);">
+      <input type="checkbox" class="cl-svc-cb" value="${s}" style="accent-color:var(--accent);width:13px;height:13px;"${selectedServices.includes(s)?' checked':''}>
+      ${s}
+    </label>`).join('');
+}
+
+function addClient(){
+  const name     = document.getElementById('cl-name').value.trim();
+  const retainer = parseFloat(document.getElementById('cl-retainer').value)||0;
+  const editId   = parseInt(document.getElementById('cl-edit-id').value)||0;
+  if(!name) return alert('Client name required.');
+  const services = [...document.querySelectorAll('.cl-svc-cb:checked')].map(cb=>cb.value).join(', ');
+  if(editId){
+    const idx = clients.findIndex(c=>c.id===editId);
+    if(idx>-1) clients[idx]={...clients[idx],name,retainer,services};
+  } else {
+    clients.push({id:nextId(clients),name,retainer,services});
+  }
+  save(); closeModal('modal-client');
+  document.getElementById('cl-edit-id').value='';
+  document.getElementById('cl-modal-title').textContent='Add Client';
+  document.getElementById('cl-save-btn').textContent='Add Client';
+  document.getElementById('cl-name').value='';
+  document.getElementById('cl-retainer').value='';
+  populateClientModal();
+  renderClients();
+}
+
+function editClient(id){
+  const c = byId(clients,id);
+  if(!c) return;
+  document.getElementById('cl-edit-id').value = id;
+  document.getElementById('cl-modal-title').textContent = 'Edit Client';
+  document.getElementById('cl-save-btn').textContent = 'Update Client';
+  document.getElementById('cl-name').value = c.name;
+  document.getElementById('cl-retainer').value = c.retainer||'';
+  const selected = (c.services||'').split(',').map(s=>s.trim()).filter(Boolean);
+  populateClientModal(selected);
+  document.getElementById('modal-client').classList.add('open');
+}
+
+function deleteClient(id){
+  if(!confirm('Delete this client?')) return;
+  clients=clients.filter(c=>c.id!==id); save(); renderClients();
+}
+
+// ══════════════════════════════════════════════════════════
+// PROJECTS
+// ══════════════════════════════════════════════════════════
+let allocRowCount = 0;
+
+function populateProjModal(editId=null){
+  const sel = document.getElementById('p-client');
+  sel.innerHTML = '<option value="">— Select Client —</option>' + clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  allocRowCount = 0;
+  document.getElementById('alloc-rows').innerHTML = '';
+  document.getElementById('p-edit-id').value = editId||'';
+
+  if(editId){
+    const proj = byId(projects, editId);
+    if(proj){
+      document.getElementById('p-modal-title').textContent = 'Edit Project';
+      document.getElementById('p-save-btn').textContent = 'Update Project';
+      document.getElementById('p-name').value = proj.name;
+      document.getElementById('p-client').value = proj.clientId;
+      document.getElementById('p-month').value = proj.month;
+      document.getElementById('p-year').value = proj.year;
+      document.getElementById('p-status').value = proj.status;
+      document.getElementById('p-budget').value = proj.budgetOverride||'';
+      (proj.allocations||[]).forEach(a=>{
+        allocRowCount++;
+        const rid='ar'+allocRowCount;
+        const memberOpts=team.map(m=>`<option value="${m.id}"${m.id===a.memberId?' selected':''}>${m.name} — ${DEPT_META[m.dept]?.short||''} (${inr(m.rate)}/hr)</option>`).join('');
+        const div=document.createElement('div');
+        div.id=rid;
+        div.style.cssText='display:grid;grid-template-columns:2fr 1.5fr 1fr auto;gap:8px;align-items:end;margin-bottom:8px;';
+        div.innerHTML=`
+          <div class="form-field"><label>Team Member</label><select class="ar-member"><option value="">— Select —</option>${memberOpts}</select></div>
+          <div class="form-field"><label>Role on Project</label><input class="ar-role" placeholder="e.g. Graphic Designer" value="${a.role||''}"></div>
+          <div class="form-field"><label>Hours / Day</label><input class="ar-hpd" type="number" value="${a.hoursPerDay}" min="0.5" step="0.5"></div>
+          <button class="btn btn-danger btn-sm" style="margin-bottom:1px" onclick="document.getElementById('${rid}').remove()">×</button>`;
+        document.getElementById('alloc-rows').appendChild(div);
+      });
+      return;
+    }
+  }
+  document.getElementById('p-modal-title').textContent = 'New Project';
+  document.getElementById('p-save-btn').textContent = 'Create Project';
+  document.getElementById('p-name').value='';
+  document.getElementById('p-budget').value='';
+  addAllocRow(); addAllocRow();
+}
+
+function addAllocRow(){
+  allocRowCount++;
+  const rid = 'ar'+allocRowCount;
+  const memberOpts = team.map(m=>`<option value="${m.id}">${m.name} — ${DEPT_META[m.dept]?.short||''} (${inr(m.rate)}/hr)</option>`).join('');
+  const div = document.createElement('div');
+  div.id = rid;
+  div.style.cssText = 'display:grid;grid-template-columns:2fr 1.5fr 1fr auto;gap:8px;align-items:end;margin-bottom:8px;';
+  div.innerHTML = `
+    <div class="form-field"><label>Team Member</label><select class="ar-member"><option value="">— Select —</option>${memberOpts}</select></div>
+    <div class="form-field"><label>Role on Project</label><input class="ar-role" placeholder="e.g. Graphic Designer"></div>
+    <div class="form-field"><label>Hours / Day</label><input class="ar-hpd" type="number" value="2" min="0.5" step="0.5"></div>
+    <button class="btn btn-danger btn-sm" style="margin-bottom:1px" onclick="document.getElementById('${rid}').remove()">×</button>`;
+  document.getElementById('alloc-rows').appendChild(div);
+}
+
+function saveProject(){
+  const name   = document.getElementById('p-name').value.trim();
+  const cId    = parseInt(document.getElementById('p-client').value);
+  const month  = document.getElementById('p-month').value;
+  const year   = parseInt(document.getElementById('p-year').value);
+  const status = document.getElementById('p-status').value;
+  const budgetOverride = parseFloat(document.getElementById('p-budget').value)||null;
+  const editId = parseInt(document.getElementById('p-edit-id').value)||0;
+  if(!name||!cId) return alert('Project name and client are required.');
+
+  const rows = document.querySelectorAll('#alloc-rows > div');
+  const allocations = [];
+  rows.forEach(row=>{
+    const mId = parseInt(row.querySelector('.ar-member').value);
+    const role = row.querySelector('.ar-role').value.trim();
+    const hpd  = parseFloat(row.querySelector('.ar-hpd').value);
+    if(mId && hpd>0) allocations.push({memberId:mId,role:role||'Team Member',hoursPerDay:hpd});
+  });
+
+  if(editId){
+    const idx = projects.findIndex(p=>p.id===editId);
+    if(idx>-1) projects[idx]={...projects[idx],name,clientId:cId,month,year,budgetOverride,status,allocations};
+  } else {
+    projects.push({id:nextId(projects),name,clientId:cId,month,year,budgetOverride,status,allocations});
+  }
+  save(); closeModal('modal-project');
+  renderProjects(); renderDashboard();
+  document.getElementById('tc-projects').textContent = projects.length;
+}
+
+function deleteProject(id){
+  if(!confirm('Delete this project?')) return;
+  projects=projects.filter(p=>p.id!==id); save(); renderProjects(); renderDashboard();
+}
+
+function renderProjects(){
+  document.getElementById('tc-projects').textContent = projects.length;
+  const container = document.getElementById('proj-list');
+  if(!projects.length){ container.innerHTML='<div class="tbl-empty">No projects yet. Create your first project.</div>'; return; }
+  container.innerHTML = projects.map(proj=>projCard(proj)).join('');
+}
+
+function projCard(proj){
+  const c = projCalc(proj);
+  const mpColor = c.marginPct>=40?'var(--green)':c.marginPct>=15?'var(--amber)':'var(--red)';
+  const statusCls = {Active:'badge-green','On Hold':'badge-amber',Completed:'badge-teal',Planning:'badge-blue'}[proj.status]||'badge-gray';
+  const budgetPct = c.retainer>0?Math.min(100,Math.round(c.projectCost/c.retainer*100)):0;
+  const budgetBarColor = budgetPct>90?'var(--red)':budgetPct>65?'var(--amber)':'var(--accent)';
+
+  const memberRows = c.memberBreakdown.map(mb=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:7px">${av(mb.member,'sm')}<div><div style="font-size:12px;font-weight:500">${mb.member.name}</div><div class="xs muted">${mb.member.pos}</div></div></div></td>
+      <td>${deptTag(mb.member.dept)}</td>
+      <td class="small muted">${mb.role}</td>
+      <td class="mono">${inr(mb.member.rate)}</td>
+      <td class="mono">${mb.hoursPerDay}h/day</td>
+      <td class="mono">${fh(mb.hoursPerMonth)}/mo</td>
+      <td class="mono fw6 c-accent">${inr(mb.cost)}</td>
+    </tr>`).join('');
+
+  return `
+  <div style="margin-bottom:16px;border-radius:var(--r2);overflow:hidden;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+    <!-- Header -->
+    <div style="background:var(--accent);padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+      <div>
+        <div style="color:#fff;font-size:15px;font-weight:700;letter-spacing:-0.3px">${proj.name}</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:12px;margin-top:3px">${c.client?.name||''} · ${proj.month} ${proj.year}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="badge ${statusCls}">${proj.status}</span>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff;border:none" onclick="openSnap(${proj.id})">View Snapshot</button>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,0.12);color:#fff;border:none" onclick="editProject(${proj.id})">Edit</button>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:#fff;border:none;padding:4px 8px" onclick="deleteProject(${proj.id})">×</button>
+      </div>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="snap-kpi-row">
+      <div class="snap-kpi"><div class="snap-kpi-lbl">Retainer</div><div class="snap-kpi-val c-green">${inr(c.retainer)}</div></div>
+      <div class="snap-kpi"><div class="snap-kpi-lbl">Project Cost</div><div class="snap-kpi-val c-accent">${inr(c.projectCost)}</div></div>
+      <div class="snap-kpi"><div class="snap-kpi-lbl">Margin</div><div class="snap-kpi-val" style="color:${mpColor}">${inr(c.margin)}</div></div>
+      <div class="snap-kpi"><div class="snap-kpi-lbl">Margin %</div><div class="snap-kpi-val" style="color:${mpColor}">${c.marginPct}%</div></div>
+      <div class="snap-kpi"><div class="snap-kpi-lbl">Team Size</div><div class="snap-kpi-val">${c.memberBreakdown.length}</div><div class="snap-kpi-sub">${fh(c.totalHours)}/mo total</div></div>
+    </div>
+
+    <!-- Budget bar -->
+    <div style="padding:12px 20px;background:var(--bg2);border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+        <span class="xs muted">Budget utilisation</span>
+        <span class="xs mono">${inr(c.projectCost)} / ${inr(c.retainer)} (${budgetPct}%)</span>
+      </div>
+      <div class="prog" style="height:6px"><div class="prog-fill" style="width:${budgetPct}%;background:${budgetBarColor}"></div></div>
+    </div>
+
+    <!-- Team table -->
+    <div style="padding:0">
+      <div class="tbl-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead><tr><th>Member</th><th>Dept</th><th>Role</th><th>Rate/hr</th><th>Hrs/Day</th><th>Hrs/Month</th><th>Monthly Cost</th></tr></thead>
+          <tbody>${memberRows}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ══ SNAPSHOT MODAL ══
+function openSnap(projId){
+  const proj = byId(projects, projId);
+  if(!proj) return;
+  const c = projCalc(proj);
+  const mpColor = c.marginPct>=40?'#15803d':c.marginPct>=15?'#b45309':'#b91c1c';
+  const budgetPct = c.retainer>0?Math.min(100,Math.round(c.projectCost/c.retainer*100)):0;
+
+  const memberRows = c.memberBreakdown.map((mb,i)=>`
+    <tr>
+      <td class="xs muted mono">${i+1}</td>
+      <td><div style="display:flex;align-items:center;gap:7px">${av(mb.member,'sm')}<div><div style="font-size:12.5px;font-weight:600">${mb.member.name}</div><div class="xs muted">${mb.member.pos}</div></div></div></td>
+      <td>${deptTag(mb.member.dept)}</td>
+      <td class="small muted">${mb.role}</td>
+      <td class="mono">${inr(mb.member.salary)}/mo</td>
+      <td class="mono">${inr(mb.member.rate)}/hr</td>
+      <td class="mono">${mb.hoursPerDay}h/day</td>
+      <td class="mono fw6">${fh(mb.hoursPerMonth)}</td>
+      <td class="mono fw6" style="color:var(--accent)">${inr(mb.cost)}</td>
+    </tr>`).join('');
+
+  // Dept breakdown
+  const deptMap = {};
+  c.memberBreakdown.forEach(mb=>{
+    if(!deptMap[mb.member.dept]) deptMap[mb.member.dept]={cost:0,hours:0,count:0};
+    deptMap[mb.member.dept].cost+=mb.cost;
+    deptMap[mb.member.dept].hours+=mb.hoursPerMonth;
+    deptMap[mb.member.dept].count++;
+  });
+  const deptRows = Object.entries(deptMap).sort((a,b)=>b[1].cost-a[1].cost).map(([dept,d])=>`
+    <div class="cost-line">
+      <div style="display:flex;align-items:center;gap:8px">${deptTag(dept)}<span class="xs muted">${d.count} member${d.count>1?'s':''} · ${fh(d.hours)}</span></div>
+      <span class="mono fw6" style="color:var(--accent)">${inr(d.cost)}</span>
+    </div>`).join('');
+
+  const html = `
+    <div class="snap-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-size:18px;font-weight:800;letter-spacing:-0.5px">${proj.name}</div>
+          <div style="color:rgba(255,255,255,0.7);font-size:12.5px;margin-top:4px">${c.client?.name||'—'} · ${c.client?.services||''}</div>
+          <div style="color:rgba(255,255,255,0.5);font-size:11.5px;margin-top:2px">${proj.month} ${proj.year} · ${proj.status}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:28px;font-weight:800;font-family:var(--mono);letter-spacing:-1px">${inr(c.margin)}</div>
+          <div style="color:rgba(255,255,255,0.7);font-size:12px;">Gross Margin · ${c.marginPct}%</div>
+        </div>
+      </div>
+    </div>
+    <div class="snap-body">
+      <!-- KPI row -->
+      <div class="snap-section" style="padding-bottom:0;border-bottom:none;">
+        <div class="snap-kpi-row" style="margin-bottom:14px">
+          <div class="snap-kpi"><div class="snap-kpi-lbl">Retainer / Budget</div><div class="snap-kpi-val c-green">${inr(c.retainer)}</div><div class="snap-kpi-sub">${proj.budgetOverride?'Manual override':'From client'}</div></div>
+          <div class="snap-kpi"><div class="snap-kpi-lbl">Total Project Cost</div><div class="snap-kpi-val c-accent">${inr(c.projectCost)}</div><div class="snap-kpi-sub">Allocated team cost</div></div>
+          <div class="snap-kpi"><div class="snap-kpi-lbl">Gross Margin</div><div class="snap-kpi-val" style="color:${mpColor}">${inr(c.margin)}</div><div class="snap-kpi-sub">${c.marginPct}% of retainer</div></div>
+          <div class="snap-kpi"><div class="snap-kpi-lbl">Total Hours / mo</div><div class="snap-kpi-val">${fh(c.totalHours)}</div><div class="snap-kpi-sub">${c.memberBreakdown.length} members</div></div>
+          <div class="snap-kpi"><div class="snap-kpi-lbl">Avg Cost / hr</div><div class="snap-kpi-val">${inr(c.totalHours>0?c.projectCost/c.totalHours:0)}</div><div class="snap-kpi-sub">Blended rate</div></div>
+        </div>
+        <!-- Margin bar -->
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span class="xs muted">Budget consumed</span>
+            <span class="xs mono">${budgetPct}% used — ${inr(c.retainer - c.projectCost)} remaining</span>
+          </div>
+          <div class="prog" style="height:8px"><div class="prog-fill" style="width:${budgetPct}%;background:${budgetPct>90?'var(--red)':budgetPct>65?'var(--amber)':'var(--accent)'}"></div></div>
+        </div>
+      </div>
+
+      <!-- Team allocation table -->
+      <div class="snap-section">
+        <div class="section-hdr"><div class="section-title">Team Allocation</div><span class="xs muted">${c.memberBreakdown.length} members assigned</span></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Name</th><th>Dept</th><th>Role on Project</th><th>Salary</th><th>Rate/hr</th><th>Hrs/Day</th><th>Hrs/Month</th><th>Cost to Project</th></tr></thead>
+            <tbody>${memberRows}</tbody>
+            <tfoot>
+              <tr style="background:var(--bg3)">
+                <td colspan="7" style="font-weight:600;font-size:12px;padding:9px 14px">Total</td>
+                <td class="mono fw6">${fh(c.totalHours)}</td>
+                <td class="mono fw6 c-accent">${inr(c.projectCost)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- Dept breakdown -->
+      <div class="snap-section">
+        <div class="section-hdr"><div class="section-title">Cost by Department</div></div>
+        ${deptRows}
+        <div class="cost-line total"><span>Total Project Cost</span><span class="mono c-accent">${inr(c.projectCost)}</span></div>
+      </div>
+
+      <!-- P&L Summary -->
+      <div class="snap-section">
+        <div class="section-hdr"><div class="section-title">P&L Summary</div></div>
+        <div class="cost-line"><span class="muted">Client Retainer (Revenue)</span><span class="mono fw6 c-green">${inr(c.retainer)}</span></div>
+        <div class="cost-line"><span class="muted">Team Cost (Allocation-based)</span><span class="mono" style="color:var(--red)">− ${inr(c.projectCost)}</span></div>
+        <div class="cost-line total">
+          <span>Gross Margin</span>
+          <div style="text-align:right"><div class="mono fw7" style="color:${mpColor}">${inr(c.margin)}</div><div class="xs" style="color:${mpColor}">${c.marginPct}% margin</div></div>
+        </div>
+        <div style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span class="xs muted">Margin Health</span><span class="xs" style="color:${mpColor}">${c.marginPct>=40?'Healthy ✓':c.marginPct>=15?'Acceptable':'Needs Attention ⚠'}</span></div>
+          <div class="prog" style="height:10px;border-radius:5px">
+            <div class="prog-fill" style="width:${Math.max(0,c.marginPct)}%;background:${mpColor};border-radius:5px"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px">
+            <span class="xs muted">0%</span><span class="xs muted">Target: 40%+</span><span class="xs muted">100%</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('snap-content').innerHTML = html;
+  openModal('modal-snap');
+}
+
+// ══════════════════════════════════════════════════════════
+// HOURS
+// ══════════════════════════════════════════════════════════
+function populateLogModal(){
+  document.getElementById('lg-member').innerHTML = team.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
+  document.getElementById('lg-project').innerHTML = projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('lg-date').value = new Date().toISOString().slice(0,10);
+}
+
+function saveLog(){
+  const memberId = parseInt(document.getElementById('lg-member').value);
+  const projId   = parseInt(document.getElementById('lg-project').value);
+  const date     = document.getElementById('lg-date').value;
+  const hours    = parseFloat(document.getElementById('lg-hours').value);
+  const notes    = document.getElementById('lg-notes').value.trim();
+  if(!date||isNaN(hours)||hours<=0) return alert('Please fill date and hours.');
+  logs.push({id:nextId(logs),memberId,projId,date,hours,notes});
+  save(); closeModal('modal-log');
+  document.getElementById('lg-hours').value='';
+  document.getElementById('lg-notes').value='';
+  renderHours();
+}
+
+function deleteLog(id){ logs=logs.filter(l=>l.id!==id); save(); renderHours(); }
+
+function renderHours(){
+  // Populate selects
+  const fp=document.getElementById('hr-filter-proj');
+  const fe=document.getElementById('hr-filter-emp');
+  const fm=document.getElementById('hr-filter-month');
+  const fpv=fp.value,fev=fe.value,fmv=fm.value;
+  fp.innerHTML='<option value="">All Projects</option>'+projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  fe.innerHTML='<option value="">All Members</option>'+team.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
+  const months=[...new Set(logs.map(l=>l.date.slice(0,7)))].sort().reverse();
+  fm.innerHTML='<option value="">All Months</option>'+months.map(m=>`<option value="${m}">${m}</option>`).join('');
+  fp.value=fpv; fe.value=fev; fm.value=fmv;
+
+  let filtered=[...logs];
+  if(fpv) filtered=filtered.filter(l=>l.projId==fpv);
+  if(fev) filtered=filtered.filter(l=>l.memberId==fev);
+  if(fmv) filtered=filtered.filter(l=>l.date.startsWith(fmv));
+  filtered.sort((a,b)=>b.date.localeCompare(a.date));
+
+  const tbody=document.getElementById('hours-body');
+  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="9" class="tbl-empty">No logs found.</td></tr>`;return;}
+  tbody.innerHTML=filtered.map(l=>{
+    const m=byId(team,l.memberId);
+    const p=byId(projects,l.projId);
+    const cost=m?m.rate*l.hours:0;
+    return `<tr>
+      <td class="mono xs">${l.date}</td>
+      <td><div style="display:flex;align-items:center;gap:7px">${m?av(m,'sm'):''}${m?m.name:'—'}</div></td>
+      <td>${m?deptTag(m.dept):'—'}</td>
+      <td>${p?`<span class="badge badge-blue" style="font-size:10.5px">${p.name}</span>`:'—'}</td>
+      <td class="mono fw6">${fh(l.hours)}</td>
+      <td class="mono muted">${m?inr(m.rate):'-'}</td>
+      <td class="mono c-green fw6">${inr(cost)}</td>
+      <td class="small muted">${l.notes||'—'}</td>
+      <td><button class="btn btn-danger btn-xs" onclick="deleteLog(${l.id})">×</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+// COSTS
+// ══════════════════════════════════════════════════════════
+function renderCosts(){
+  const pf=document.getElementById('cost-proj-filter');
+  const pfv=pf.value;
+  pf.innerHTML='<option value="">All Projects</option>'+projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  pf.value=pfv;
+
+  const projFilter=parseInt(pfv)||0;
+  const filteredProjs=projFilter?projects.filter(p=>p.id===projFilter):projects;
+
+  let totalRetainer=0,totalCost=0;
+  const memberMap={},deptMap={},projMap={};
+
+  filteredProjs.forEach(proj=>{
+    const c=projCalc(proj);
+    totalRetainer+=c.retainer;
+    totalCost+=c.projectCost;
+    projMap[proj.id]={name:proj.name,cost:c.projectCost,retainer:c.retainer,margin:c.margin,marginPct:c.marginPct};
+    c.memberBreakdown.forEach(mb=>{
+      if(!memberMap[mb.member.id]) memberMap[mb.member.id]={member:mb.member,cost:0,hours:0};
+      memberMap[mb.member.id].cost+=mb.cost;
+      memberMap[mb.member.id].hours+=mb.hoursPerMonth;
+      const d=mb.member.dept;
+      if(!deptMap[d]) deptMap[d]={cost:0,hours:0,count:0};
+      deptMap[d].cost+=mb.cost;
+      deptMap[d].hours+=mb.hoursPerMonth;
+      deptMap[d].count++;
+    });
+  });
+
+  const totalMargin=totalRetainer-totalCost;
+  const totalMpct=totalRetainer>0?Math.round(totalMargin/totalRetainer*100):0;
+  const mpColor=totalMpct>=40?'var(--green)':totalMpct>=15?'var(--amber)':'var(--red)';
+
+  document.getElementById('cost-stats').innerHTML=`
+    <div class="stat"><div class="stat-lbl">Total Retainer</div><div class="stat-val c-green">${inr(totalRetainer)}</div><div class="stat-hint">${filteredProjs.length} projects</div></div>
+    <div class="stat"><div class="stat-lbl">Total Team Cost</div><div class="stat-val c-accent">${inr(totalCost)}</div></div>
+    <div class="stat"><div class="stat-lbl">Gross Margin</div><div class="stat-val" style="color:${mpColor}">${inr(totalMargin)}</div></div>
+    <div class="stat"><div class="stat-lbl">Margin %</div><div class="stat-val" style="color:${mpColor}">${totalMpct}%</div></div>`;
+
+  const memberArr=Object.values(memberMap).sort((a,b)=>b.cost-a.cost);
+  const maxMc=memberArr[0]?.cost||1;
+  document.getElementById('cost-by-member').innerHTML=memberArr.length?memberArr.map(x=>`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      ${av(x.member,'sm')}
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:12.5px;font-weight:500">${x.member.name}</span>
+          <span class="mono xs c-accent">${inr(x.cost)}</span>
+        </div>
+        <div class="prog"><div class="prog-fill" style="width:${Math.round(x.cost/maxMc*100)}%;background:var(--accent)"></div></div>
+        <div class="xs muted" style="margin-top:2px">${fh(x.hours)} allocated</div>
+      </div>
+    </div>`).join(''):'<div class="tbl-empty">No data</div>';
+
+  const deptArr=Object.entries(deptMap).sort((a,b)=>b[1].cost-a[1].cost);
+  const maxDc=deptArr[0]?.[1]?.cost||1;
+  document.getElementById('cost-by-dept').innerHTML=deptArr.length?deptArr.map(([dept,d])=>`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      ${deptTag(dept)}
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span class="xs muted">${d.count} member${d.count>1?'s':''} · ${fh(d.hours)}</span>
+          <span class="mono xs c-accent">${inr(d.cost)}</span>
+        </div>
+        <div class="prog"><div class="prog-fill" style="width:${Math.round(d.cost/maxDc*100)}%;background:var(--accent)"></div></div>
+      </div>
+    </div>`).join(''):'<div class="tbl-empty">No data</div>';
+
+  const projArr=Object.values(projMap).sort((a,b)=>b.cost-a.cost);
+  document.getElementById('cost-by-proj').innerHTML=projArr.length?`
+    <div class="tbl-wrap" style="border:none;border-radius:0">
+      <table>
+        <thead><tr><th>Project</th><th>Retainer</th><th>Team Cost</th><th>Gross Margin</th><th>Margin %</th><th>Visual</th></tr></thead>
+        <tbody>${projArr.map(p=>{
+          const mc=p.marginPct>=40?'var(--green)':p.marginPct>=15?'var(--amber)':'var(--red)';
+          const bp=p.retainer>0?Math.min(100,Math.round(p.cost/p.retainer*100)):0;
+          return `<tr>
+            <td class="fw6 small">${p.name}</td>
+            <td class="mono c-green">${inr(p.retainer)}</td>
+            <td class="mono c-accent">${inr(p.cost)}</td>
+            <td class="mono fw6" style="color:${mc}">${inr(p.margin)}</td>
+            <td class="mono fw6" style="color:${mc}">${p.marginPct}%</td>
+            <td style="width:120px"><div class="prog"><div class="prog-fill" style="width:${bp}%;background:${bp>90?'var(--red)':bp>65?'var(--amber)':'var(--accent)'}"></div></div><div class="xs muted" style="margin-top:2px">${bp}% used</div></td>
+          </tr>`;}).join('')}
+        </tbody>
+      </table>
+    </div>`:'<div class="tbl-empty">No data</div>';
+}
+
+// ══════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════
+function renderDashboard(){
+  const totalSalary = team.reduce((s,m)=>s+m.salary,0);
+  const totalRetainer = clients.reduce((s,c)=>s+c.retainer,0);
+  const totalProjCost = projects.reduce((s,p)=>s+projCalc(p).projectCost,0);
+  const grossMargin = projects.reduce((s,p)=>{ const c=projCalc(p); return s+c.margin; },0);
+  const avgMarginPct = totalRetainer>0?Math.round(grossMargin/totalRetainer*100):0;
+  const mpColor = avgMarginPct>=40?'var(--green)':avgMarginPct>=15?'var(--amber)':'var(--red)';
+
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="stat"><div class="stat-lbl">Monthly Payroll</div><div class="stat-val c-red">${inr(totalSalary)}</div><div class="stat-hint">${team.length} members</div></div>
+    <div class="stat"><div class="stat-lbl">Total Retainer</div><div class="stat-val c-green">${inr(totalRetainer)}</div><div class="stat-hint">${clients.filter(c=>c.retainer>0).length} paying clients</div></div>
+    <div class="stat"><div class="stat-lbl">Allocated Cost</div><div class="stat-val c-accent">${inr(totalProjCost)}</div><div class="stat-hint">${projects.length} projects</div></div>
+    <div class="stat"><div class="stat-lbl">Gross Margin</div><div class="stat-val" style="color:${mpColor}">${inr(grossMargin)}</div><div class="stat-hint">${avgMarginPct}% avg</div></div>`;
+
+  // Project cost vs budget
+  const pdata = projects.map(p=>{ const c=projCalc(p); return {...p,...c}; }).sort((a,b)=>b.retainer-a.retainer).slice(0,8);
+  const maxR = pdata[0]?.retainer||1;
+  document.getElementById('dash-proj-costs').innerHTML = pdata.map(p=>`
+    <div style="margin-bottom:11px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <span style="font-size:12px;font-weight:500">${p.name.length>30?p.name.slice(0,30)+'…':p.name}</span>
+        <span class="mono xs">${inr(p.projectCost)} / ${inr(p.retainer)}</span>
+      </div>
+      <div class="prog" style="height:6px">
+        <div style="height:6px;background:var(--bg3);border-radius:3px;position:relative;overflow:hidden">
+          <div style="height:100%;width:${Math.min(100,pct(p.retainer,maxR))}%;background:var(--green-border);position:absolute;border-radius:3px"></div>
+          <div style="height:100%;width:${Math.min(100,pct(p.projectCost,maxR))}%;background:var(--accent);position:absolute;border-radius:3px"></div>
+        </div>
+      </div>
+    </div>`).join('') || '<div class="tbl-empty">No projects yet</div>';
+
+  // Utilisation
+  const allocMap={};
+  projects.forEach(p=>{ (p.allocations||[]).forEach(a=>{ if(!allocMap[a.memberId]) allocMap[a.memberId]=0; allocMap[a.memberId]+=(+(a.hoursPerDay*22).toFixed(1)); }); });
+  const topUtil = team.map(m=>({...m,hrs:allocMap[m.id]||0})).filter(m=>m.hrs>0).sort((a,b)=>b.hrs-a.hrs).slice(0,10);
+  document.getElementById('dash-util').innerHTML = topUtil.map(m=>{
+    const p=Math.min(100,Math.round(m.hrs/HOURS_MONTH*100));
+    const bc=p>90?'var(--red)':p>65?'var(--amber)':'var(--accent)';
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
+      ${av(m,'sm')}
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:12px">${m.name}</span>
+          <span class="mono xs muted">${fh(m.hrs)} / ${HOURS_MONTH}h</span>
+        </div>
+        <div class="prog"><div class="prog-fill" style="width:${p}%;background:${bc}"></div></div>
+      </div>
+      <span class="mono xs" style="color:${bc};width:28px;text-align:right">${p}%</span>
+    </div>`;
+  }).join('') || '<div class="tbl-empty">No allocations yet</div>';
+
+  // Project summary table
+  const tbody = document.getElementById('dash-proj-body');
+  tbody.innerHTML = projects.map(p=>{
+    const c=projCalc(p);
+    const mpColor=c.marginPct>=40?'var(--green)':c.marginPct>=15?'var(--amber)':'var(--red)';
+    const scls={Active:'badge-green','On Hold':'badge-amber',Completed:'badge-teal',Planning:'badge-blue'}[p.status]||'badge-gray';
+    return `<tr>
+      <td><div class="fw6 small">${p.name}</div><div class="xs muted">${c.client?.name||''}</div></td>
+      <td class="mono">${c.memberBreakdown.length}</td>
+      <td class="mono">${fh(c.totalHours)}</td>
+      <td class="mono c-accent">${inr(c.projectCost)}</td>
+      <td class="mono c-green">${inr(c.retainer)}</td>
+      <td class="mono fw6" style="color:${mpColor}">${inr(c.margin)}</td>
+      <td class="mono fw6" style="color:${mpColor}">${c.marginPct}%</td>
+      <td><span class="badge ${scls}">${p.status}</span></td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="8" class="tbl-empty">No projects. <a href="#" onclick="goTab('projects',document.querySelector('.nav-tab:nth-child(5)'))">Create one →</a></td></tr>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// SILOS
+// ══════════════════════════════════════════════════════════
+const SEED_SILOS = [
+  {
+    id:1, name:'Hospitality Silo', color:'blue', desc:'Hotels, Restaurants & Luxury Dining',
+    leadId:1,
+    memberIds:[1,12,18,31,39,7,43],
+    clientIds:[25,8,17,28,29,32,16]
+  },
+  {
+    id:2, name:'F&B & Café Silo', color:'amber', desc:'Cafes, Bakeries, Food Brands',
+    leadId:2,
+    memberIds:[2,13,19,32,40,9],
+    clientIds:[1,2,3,6,7,15,21,22]
+  },
+  {
+    id:3, name:'Lifestyle & Beauty Silo', color:'pink', desc:'Beauty, Wellness, Lifestyle Brands',
+    leadId:5,
+    memberIds:[5,23,20,33,41,10],
+    clientIds:[4,5,20,22,27]
+  },
+  {
+    id:4, name:'Real Estate & Ventures Silo', color:'teal', desc:'Real estate, co-living, developers',
+    leadId:6,
+    memberIds:[6,25,21,34,38,11],
+    clientIds:[11,12,13,23,26]
+  },
+  {
+    id:5, name:'Performance & Growth Silo', color:'purple', desc:'SEO, Ads, Performance Marketing',
+    leadId:3,
+    memberIds:[3,30,8,15,36,37],
+    clientIds:[9,14,30,31,19]
+  },
+];
+
+let silos = JSON.parse(localStorage.getItem('tie_silos') || 'null') || SEED_SILOS;
+function saveSilos(){ localStorage.setItem('tie_silos', JSON.stringify(silos)); }
+
+// Silo P&L calc
+function siloCalc(silo){
+  const memberList = silo.memberIds.map(id=>byId(team,id)).filter(Boolean);
+  const clientList = silo.clientIds.map(id=>byId(clients,id)).filter(Boolean);
+  const totalSalary = memberList.reduce((s,m)=>s+m.salary,0);
+  const totalRetainer = clientList.reduce((s,c)=>s+c.retainer,0);
+  // project cost: sum of all project allocations where project's client is in silo AND member is in silo
+  let allocCost = 0;
+  projects.forEach(proj=>{
+    if(!silo.clientIds.includes(proj.clientId)) return;
+    (proj.allocations||[]).forEach(a=>{
+      if(!silo.memberIds.includes(a.memberId)) return;
+      const m=byId(team,a.memberId);
+      if(m) allocCost += m.rate * (+(a.hoursPerDay*22).toFixed(1));
+    });
+  });
+  const margin = totalRetainer - totalSalary;
+  const marginPct = totalRetainer>0 ? Math.round(margin/totalRetainer*100) : 0;
+  const totalHours = memberList.length * HOURS_MONTH;
+  return {memberList, clientList, totalSalary, totalRetainer, allocCost, margin, marginPct, totalHours};
+}
+
+function renderSilos(){
+  silos = JSON.parse(localStorage.getItem('tie_silos') || 'null') || SEED_SILOS;
+  document.getElementById('tc-silos').textContent = silos.length;
+
+  // Stats
+  const totalRetainer = silos.reduce((s,sl)=>{ const c=siloCalc(sl); return s+c.totalRetainer; },0);
+  const totalSalary   = silos.reduce((s,sl)=>{ const c=siloCalc(sl); return s+c.totalSalary; },0);
+  const totalMargin   = totalRetainer - totalSalary;
+  const totalMpct     = totalRetainer>0 ? Math.round(totalMargin/totalRetainer*100) : 0;
+  const mpColor       = totalMpct>=40?'var(--green)':totalMpct>=20?'var(--amber)':'var(--red)';
+  const totalMembers  = new Set(silos.flatMap(sl=>sl.memberIds)).size;
+
+  document.getElementById('silo-stats').innerHTML=`
+    <div class="stat"><div class="stat-lbl">Total Silos</div><div class="stat-val c-accent">${silos.length}</div><div class="stat-hint">${totalMembers} members assigned</div></div>
+    <div class="stat"><div class="stat-lbl">Combined Retainer</div><div class="stat-val c-green">${inr(totalRetainer)}</div><div class="stat-hint">Across all silos</div></div>
+    <div class="stat"><div class="stat-lbl">Combined Salary Cost</div><div class="stat-val c-red">${inr(totalSalary)}</div><div class="stat-hint">Monthly payroll in silos</div></div>
+    <div class="stat"><div class="stat-lbl">Gross Margin</div><div class="stat-val" style="color:${mpColor}">${inr(totalMargin)}</div><div class="stat-hint">${totalMpct}% margin</div></div>`;
+
+  const grid = document.getElementById('silo-grid');
+  if(!silos.length){ grid.innerHTML='<div class="tbl-empty">No silos yet. Create your first silo.</div>'; return; }
+  grid.innerHTML = silos.map(silo=>siloCard(silo)).join('');
+}
+
+function siloCard(silo){
+  const c = siloCalc(silo);
+  const lead = byId(team, silo.leadId);
+  const mpColor = c.marginPct>=40?'var(--green)':c.marginPct>=20?'var(--amber)':'var(--red)';
+  const budgetPct = c.totalRetainer>0 ? Math.min(100,Math.round(c.totalSalary/c.totalRetainer*100)) : 0;
+
+  const memberAvatars = c.memberList.slice(0,8).map(m=>`
+    <div style="display:flex;align-items:center;gap:7px;flex:1 1 160px;">
+      ${av(m,'sm')}
+      <div style="min-width:0">
+        <div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.name}</div>
+        <div class="xs muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.pos}</div>
+      </div>
+      <span style="margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--text3);white-space:nowrap;">${inr(m.rate)}/hr</span>
+    </div>`).join('');
+
+  const clientChips = c.clientList.map(cl=>`
+    <div class="silo-client-chip">
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--${silo.color},var(--accent));flex-shrink:0;display:inline-block;"></span>
+      <span>${cl.name}</span>
+      <span class="mono" style="color:var(--text3);font-size:10px;">${cl.retainer?inr(cl.retainer):''}</span>
+    </div>`).join('');
+
+  return `
+  <div class="silo-card sc-${silo.color}">
+    <div class="silo-color-bar"></div>
+    <div class="silo-hdr">
+      <div style="min-width:0">
+        <div class="silo-name">${silo.name}</div>
+        <div class="silo-lead">
+          ${lead ? `${av(lead,'sm')} <span>${lead.name}</span> <span class="badge badge-gray" style="font-size:10px;">Lead</span>` : '<span class="muted">No lead assigned</span>'}
+        </div>
+        ${silo.desc ? `<div class="xs muted" style="margin-top:4px">${silo.desc}</div>` : ''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+        <span class="badge ${c.marginPct>=40?'badge-green':c.marginPct>=20?'badge-amber':'badge-red'}">${c.marginPct}% margin</span>
+        <span class="xs muted">${c.memberList.length} members · ${c.clientList.length} clients</span>
+      </div>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="silo-kpis">
+      <div class="silo-kpi"><div class="silo-kpi-lbl">Retainer</div><div class="silo-kpi-val c-green">${inr(c.totalRetainer)}</div></div>
+      <div class="silo-kpi"><div class="silo-kpi-lbl">Salary Cost</div><div class="silo-kpi-val c-red">${inr(c.totalSalary)}</div></div>
+      <div class="silo-kpi"><div class="silo-kpi-lbl">Gross Margin</div><div class="silo-kpi-val" style="color:${mpColor}">${inr(c.margin)}</div></div>
+      <div class="silo-kpi"><div class="silo-kpi-lbl">Capacity</div><div class="silo-kpi-val">${c.memberList.length * HOURS_MONTH}h</div></div>
+    </div>
+
+    <!-- Budget health bar -->
+    <div style="padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span class="xs muted">Salary vs Retainer</span>
+        <span class="xs mono">${budgetPct}%</span>
+      </div>
+      <div class="prog" style="height:5px;">
+        <div class="prog-fill" style="width:${budgetPct}%;background:${budgetPct>85?'var(--red)':budgetPct>65?'var(--amber)':'var(--green)'};"></div>
+      </div>
+    </div>
+
+    <!-- Members -->
+    <div class="silo-members">
+      <div class="silo-section-lbl">Team Members</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${memberAvatars}
+        ${c.memberList.length>8?`<div class="xs muted" style="align-self:center;padding:4px;">+${c.memberList.length-8} more</div>`:''}
+      </div>
+    </div>
+
+    <!-- Clients -->
+    <div class="silo-clients">
+      <div class="silo-section-lbl">Assigned Clients</div>
+      <div>${clientChips || '<span class="xs muted">No clients assigned</span>'}</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="silo-actions">
+      <button class="btn btn-ghost btn-sm" onclick="openSiloDetail(${silo.id})">View Detail</button>
+      <button class="btn btn-ghost btn-sm" onclick="editSilo(${silo.id})">Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteSilo(${silo.id})">Delete</button>
+    </div>
+  </div>`;
+}
+
+function openSiloDetail(siloId){
+  const silo = byId(silos, siloId);
+  if(!silo) return;
+  const c = siloCalc(silo);
+  const lead = byId(team, silo.leadId);
+  const mpColor = c.marginPct>=40?'#15803d':c.marginPct>=20?'#b45309':'#b91c1c';
+  const budgetPct = c.totalRetainer>0 ? Math.min(100,Math.round(c.totalSalary/c.totalRetainer*100)):0;
+
+  // Per-dept breakdown within silo
+  const deptMap={};
+  c.memberList.forEach(m=>{
+    if(!deptMap[m.dept]) deptMap[m.dept]={salary:0,count:0,members:[]};
+    deptMap[m.dept].salary+=m.salary; deptMap[m.dept].count++; deptMap[m.dept].members.push(m);
+  });
+  const deptRows = Object.entries(deptMap).sort((a,b)=>b[1].salary-a[1].salary).map(([dept,d])=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:8px;">${deptTag(dept)}<span class="xs muted">${d.count} member${d.count>1?'s':''}</span></div>
+      <span class="mono xs fw6 c-accent">${inr(d.salary)}/mo</span>
+    </div>`).join('');
+
+  const memberRows = c.memberList.map((m,i)=>`
+    <tr>
+      <td class="xs muted mono">${i+1}</td>
+      <td><div style="display:flex;align-items:center;gap:8px;">${av(m,'sm')}<div><div style="font-size:12.5px;font-weight:600">${m.name}</div><div class="xs muted">${m.pos}</div></div></div></td>
+      <td>${deptTag(m.dept)}</td>
+      <td class="mono">${inr(m.salary)}/mo</td>
+      <td class="mono">${inr(m.rate)}/hr</td>
+      <td class="mono">${HOURS_MONTH}h</td>
+      <td class="mono fw6 c-accent">${inr(m.salary)}</td>
+    </tr>`).join('');
+
+  const clientRows = c.clientList.map((cl,i)=>{
+    const cProjs = projects.filter(p=>p.clientId===cl.id);
+    return `<tr>
+      <td class="xs muted mono">${i+1}</td>
+      <td class="fw6">${cl.name}</td>
+      <td class="small muted">${cl.services}</td>
+      <td class="mono c-green fw6">${cl.retainer?inr(cl.retainer):'—'}</td>
+      <td>${cProjs.map(p=>`<span class="badge badge-blue" style="font-size:10px;">${p.name}</span>`).join(' ')||'<span class="xs muted">No projects</span>'}</td>
+    </tr>`;}).join('');
+
+  const accentColors = {blue:'#1e40af',green:'#15803d',purple:'#6d28d9',amber:'#b45309',teal:'#0f766e',pink:'#be185d',red:'#b91c1c'};
+  const accentHex = accentColors[silo.color]||'#1e40af';
+
+  document.getElementById('silo-detail-content').innerHTML=`
+    <div style="background:${accentHex};color:#fff;border-radius:var(--r2) var(--r2) 0 0;padding:20px 24px;margin:-24px -24px 0;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div style="font-size:18px;font-weight:800;letter-spacing:-0.5px;">${silo.name}</div>
+          ${lead?`<div style="color:rgba(255,255,255,0.75);font-size:12px;margin-top:4px;display:flex;align-items:center;gap:6px;">
+            <div style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;">${initials(lead.name)}</div>
+            Lead: ${lead.name}
+          </div>`:''}
+          ${silo.desc?`<div style="color:rgba(255,255,255,0.6);font-size:11.5px;margin-top:3px;">${silo.desc}</div>`:''}
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:28px;font-weight:800;font-family:var(--mono);letter-spacing:-1px;">${inr(c.margin)}</div>
+          <div style="color:rgba(255,255,255,0.7);font-size:12px;">Gross Margin · ${c.marginPct}%</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <!-- KPIs -->
+      <div class="snap-kpi-row" style="margin-bottom:16px;">
+        <div class="snap-kpi"><div class="snap-kpi-lbl">Total Retainer</div><div class="snap-kpi-val c-green">${inr(c.totalRetainer)}</div><div class="snap-kpi-sub">${c.clientList.length} clients</div></div>
+        <div class="snap-kpi"><div class="snap-kpi-lbl">Monthly Salary</div><div class="snap-kpi-val c-red">${inr(c.totalSalary)}</div><div class="snap-kpi-sub">${c.memberList.length} members</div></div>
+        <div class="snap-kpi"><div class="snap-kpi-lbl">Gross Margin</div><div class="snap-kpi-val" style="color:${mpColor}">${inr(c.margin)}</div><div class="snap-kpi-sub">${c.marginPct}% of retainer</div></div>
+        <div class="snap-kpi"><div class="snap-kpi-lbl">Monthly Capacity</div><div class="snap-kpi-val">${fh(c.totalHours)}</div><div class="snap-kpi-sub">${c.memberList.length} × ${HOURS_MONTH}h</div></div>
+        <div class="snap-kpi"><div class="snap-kpi-lbl">Avg Rate / hr</div><div class="snap-kpi-val">${inr(c.memberList.length>0?c.totalSalary/c.totalHours:0)}</div><div class="snap-kpi-sub">Blended</div></div>
+      </div>
+
+      <!-- Salary vs Retainer bar -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span class="xs muted fw6">Salary Absorption</span>
+          <span class="xs mono">${budgetPct}% of retainer consumed by salaries</span>
+        </div>
+        <div class="prog" style="height:8px;border-radius:4px;">
+          <div class="prog-fill" style="width:${budgetPct}%;background:${budgetPct>85?'var(--red)':budgetPct>65?'var(--amber)':'var(--green)'};border-radius:4px;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;">
+          <span class="xs muted">Salary: ${inr(c.totalSalary)}</span>
+          <span class="xs muted">Retainer: ${inr(c.totalRetainer)}</span>
+        </div>
+      </div>
+
+      <div class="g2" style="margin-bottom:16px;">
+        <!-- Members table -->
+        <div>
+          <div class="section-hdr"><div class="section-title">Team Members</div><span class="xs muted">${c.memberList.length} assigned</span></div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Name</th><th>Dept</th><th>Salary</th><th>Rate/hr</th><th>Hrs/mo</th><th>Monthly Cost</th></tr></thead>
+              <tbody>${memberRows}</tbody>
+              <tfoot><tr style="background:var(--bg3);">
+                <td colspan="6" class="fw6 xs" style="padding:9px 14px;">Total</td>
+                <td class="mono fw6 c-accent" style="padding:9px 14px;">${inr(c.totalSalary)}</td>
+              </tr></tfoot>
+            </table>
+          </div>
+        </div>
+        <!-- Dept breakdown -->
+        <div>
+          <div class="section-hdr"><div class="section-title">By Department</div></div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;">
+            ${deptRows}
+            <div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:4px;border-top:2px solid var(--border2);">
+              <span class="fw6 xs">Total Monthly Salary</span>
+              <span class="mono fw7 c-accent">${inr(c.totalSalary)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clients table -->
+      <div>
+        <div class="section-hdr"><div class="section-title">Assigned Clients</div><span class="xs muted">${c.clientList.length} clients</span></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Client</th><th>Services</th><th>Monthly Retainer</th><th>Projects</th></tr></thead>
+            <tbody>${clientRows}</tbody>
+            <tfoot><tr style="background:var(--bg3);">
+              <td colspan="3" class="fw6 xs" style="padding:9px 14px;">Total Retainer</td>
+              <td class="mono fw6 c-green" style="padding:9px 14px;">${inr(c.totalRetainer)}</td>
+              <td></td>
+            </tr></tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- P&L Summary -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-top:16px;">
+        <div class="section-title" style="margin-bottom:12px;">P&L Summary</div>
+        <div class="cost-line"><span class="muted">Total Client Retainer (Revenue)</span><span class="mono fw6 c-green">${inr(c.totalRetainer)}</span></div>
+        <div class="cost-line"><span class="muted">Team Monthly Salary (Cost)</span><span class="mono" style="color:var(--red);">− ${inr(c.totalSalary)}</span></div>
+        <div class="cost-line total">
+          <span>Gross Margin</span>
+          <div style="text-align:right;"><div class="mono fw7" style="color:${mpColor};">${inr(c.margin)}</div><div class="xs" style="color:${mpColor};">${c.marginPct}% margin</div></div>
+        </div>
+        <div style="margin-top:12px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span class="xs muted">Margin Health</span><span class="xs fw6" style="color:${mpColor};">${c.marginPct>=40?'Healthy ✓':c.marginPct>=20?'Acceptable ⚡':'Needs Attention ⚠'}</span></div>
+          <div class="prog" style="height:10px;border-radius:5px;"><div class="prog-fill" style="width:${Math.max(0,c.marginPct)}%;background:${mpColor};border-radius:5px;"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:3px;"><span class="xs muted">0%</span><span class="xs muted">Target ≥ 40%</span><span class="xs muted">100%</span></div>
+        </div>
+      </div>
+    </div>`;
+  openModal('modal-silo-detail');
+}
+
+function openSiloModal(siloId=null){
+  // Populate lead dropdown
+  document.getElementById('s-lead').innerHTML = '<option value="">— Select Lead —</option>' +
+    team.filter(m=>m.dept==='Account Management Team').map(m=>`<option value="${m.id}">${m.name}</option>`).join('') +
+    '<optgroup label="Other"></optgroup>' +
+    team.filter(m=>m.dept!=='Account Management Team').map(m=>`<option value="${m.id}">${m.name} (${DEPT_META[m.dept]?.short||''})</option>`).join('');
+
+  // Member checkboxes
+  document.getElementById('s-members-grid').innerHTML = team.map(m=>`
+    <label style="display:flex;align-items:center;gap:7px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12.5px;background:var(--bg2);">
+      <input type="checkbox" class="sm-cb" value="${m.id}" style="width:13px;height:13px;accent-color:var(--accent);">
+      ${av(m,'sm')} <div><div style="font-size:12px;font-weight:500;">${m.name}</div><div class="xs muted">${DEPT_META[m.dept]?.short||''}</div></div>
+    </label>`).join('');
+
+  // Client checkboxes
+  document.getElementById('s-clients-grid').innerHTML = clients.filter(c=>c.retainer>0).map(c=>`
+    <label style="display:flex;align-items:center;gap:7px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12px;background:var(--bg2);">
+      <input type="checkbox" class="sc-cb" value="${c.id}" style="width:13px;height:13px;accent-color:var(--accent);">
+      <div><div style="font-size:12px;font-weight:500;">${c.name}</div><div class="xs muted">${inr(c.retainer)}/mo</div></div>
+    </label>`).join('');
+
+  if(siloId){
+    const s = byId(silos, siloId);
+    document.getElementById('silo-modal-title').textContent = 'Edit Silo';
+    document.getElementById('silo-edit-id').value = siloId;
+    document.getElementById('s-name').value = s.name;
+    document.getElementById('s-lead').value = s.leadId||'';
+    document.getElementById('s-color').value = s.color||'blue';
+    document.getElementById('s-desc').value = s.desc||'';
+    document.querySelectorAll('.sm-cb').forEach(cb=>{ cb.checked = s.memberIds.includes(parseInt(cb.value)); });
+    document.querySelectorAll('.sc-cb').forEach(cb=>{ cb.checked = s.clientIds.includes(parseInt(cb.value)); });
+  } else {
+    document.getElementById('silo-modal-title').textContent = 'Create Silo';
+    document.getElementById('silo-edit-id').value = '';
+    ['s-name','s-desc'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('s-lead').value='';
+    document.getElementById('s-color').value='blue';
+  }
+  document.getElementById('modal-silo').classList.add('open');
+}
+
+function saveSilo(){
+  const name    = document.getElementById('s-name').value.trim();
+  const leadId  = parseInt(document.getElementById('s-lead').value)||null;
+  const color   = document.getElementById('s-color').value;
+  const desc    = document.getElementById('s-desc').value.trim();
+  if(!name) return alert('Silo name required.');
+  const memberIds = [...document.querySelectorAll('.sm-cb:checked')].map(cb=>parseInt(cb.value));
+  const clientIds = [...document.querySelectorAll('.sc-cb:checked')].map(cb=>parseInt(cb.value));
+  const editId = parseInt(document.getElementById('silo-edit-id').value)||0;
+  if(editId){
+    const idx = silos.findIndex(s=>s.id===editId);
+    if(idx>-1) silos[idx]={...silos[idx],name,leadId,color,desc,memberIds,clientIds};
+  } else {
+    silos.push({id:nextId(silos),name,leadId,color,desc,memberIds,clientIds});
+  }
+  saveSilos(); closeModal('modal-silo'); renderSilos();
+}
+
+function editSilo(id){ openSiloModal(id); }
+function deleteSilo(id){
+  if(!confirm('Delete this silo?')) return;
+  silos=silos.filter(s=>s.id!==id); saveSilos(); renderSilos();
+}
+
+populateClientModal();
+renderDashboard();
+document.getElementById('tc-team').textContent = team.length;
+document.getElementById('tc-clients').textContent = clients.length;
+document.getElementById('tc-projects').textContent = projects.length;
+document.getElementById('tc-silos').textContent = silos.length;
+
+// Unified goTab — overrides the earlier definition
+function goTab(tab, el){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  const renders = {dashboard:renderDashboard,team:renderTeam,clients:renderClients,projects:renderProjects,silos:renderSilos,hours:renderHours,costs:renderCosts};
+  if(renders[tab]) renders[tab]();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/User/AppData/Local/Programs/Python/Python313/**)",
+      "Bash(./python.exe -m pip install pypdf)",
+      "Bash(cmd /c \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python313\\\\python.exe\" -c \":*)",
+      "Bash(cmd /c \"dir \"\"C:\\\\Projects\\\\TIE\\\\Resource Mapping\\\\index.html\"\"\")"
+    ]
+  }
+}
