@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResourcIQ — The Impact Engine</title>
+<title>RMCA App · Smart Resource Management and Cost Analysis Hub</title>
+<link rel="icon" type="image/jpeg" href="/logo.jpg">
+<link rel="apple-touch-icon" href="/logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -27,20 +29,32 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:13
 ::-webkit-scrollbar{width:6px;height:6px;} ::-webkit-scrollbar-track{background:var(--bg3);} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 
 /* LOGIN OVERLAY */
-#login-overlay{position:fixed;inset:0;background:#f7f6f2;z-index:9999;display:flex;align-items:center;justify-content:center;}
+#login-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#0b1220;}
 #login-overlay.hidden{display:none;}
-.login-box{background:#fff;border:1px solid var(--border);border-radius:16px;padding:44px 48px;width:380px;box-shadow:0 8px 40px rgba(0,0,0,0.08);}
-.login-logo{display:flex;justify-content:center;margin-bottom:16px;}
-.login-logo img{width:180px;height:auto;object-fit:contain;}
-.login-title{font-size:15px;font-weight:700;letter-spacing:-0.3px;margin-bottom:4px;text-align:center;}
-.login-sub{font-size:11.5px;color:var(--text2);margin-bottom:24px;text-align:center;line-height:1.5;}
-.login-field{margin-bottom:14px;}
-.login-field label{display:block;font-size:11.5px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
-.login-field input{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--r);font-family:var(--sans);font-size:13px;background:var(--bg);outline:none;transition:border-color 0.15s;}
-.login-field input:focus{border-color:var(--accent);}
+/* animated gradient backdrop */
+.login-bg{position:absolute;inset:0;background:linear-gradient(120deg,#0b1220,#12203b,#3a0d10,#1e2a4a,#0b1220);background-size:300% 300%;animation:loginShift 18s ease infinite;}
+@keyframes loginShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+.login-orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:0.55;animation:loginFloat 14s ease-in-out infinite;}
+.login-orb.o1{width:420px;height:420px;background:#1e40af;top:-120px;left:-80px;}
+.login-orb.o2{width:360px;height:360px;background:#b91c1c;bottom:-120px;right:-60px;animation-delay:-5s;}
+.login-orb.o3{width:280px;height:280px;background:#6d28d9;top:40%;left:55%;animation-delay:-9s;}
+@keyframes loginFloat{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,-30px) scale(1.08);}66%{transform:translate(-30px,25px) scale(0.94);}}
+.login-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(circle at 50% 45%,#000 0%,transparent 75%);}
+.login-box{position:relative;z-index:2;background:rgba(255,255,255,0.98);border:1px solid rgba(255,255,255,0.6);border-radius:20px;padding:40px 44px;width:400px;box-shadow:0 30px 90px rgba(0,0,0,0.55);animation:loginRise 0.6s cubic-bezier(0.16,1,0.3,1);}
+@keyframes loginRise{from{opacity:0;transform:translateY(24px) scale(0.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+.login-logo{display:flex;justify-content:center;margin-bottom:18px;}
+.login-logo img{width:190px;height:auto;object-fit:contain;}
+.login-title{font-size:16px;font-weight:700;letter-spacing:-0.3px;margin-bottom:5px;text-align:center;}
+.login-sub{font-size:11.5px;color:var(--text2);margin-bottom:26px;text-align:center;line-height:1.5;}
+.login-field{margin-bottom:15px;position:relative;}
+.login-field label{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.6px;}
+.login-field input{width:100%;padding:11px 13px;border:1.5px solid var(--border2);border-radius:10px;font-family:var(--sans);font-size:13.5px;background:var(--bg);outline:none;transition:border-color 0.18s,box-shadow 0.18s;}
+.login-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,64,175,0.14);}
 .login-err{font-size:12px;color:var(--red);margin-bottom:12px;display:none;}
-.login-btn{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-family:var(--sans);font-size:13.5px;font-weight:600;cursor:pointer;transition:background 0.15s;margin-top:4px;}
-.login-btn:hover{background:#1e3a8a;}
+.login-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:var(--sans);font-size:13.5px;font-weight:600;cursor:pointer;transition:transform 0.12s,background 0.15s,box-shadow 0.15s;margin-top:6px;box-shadow:0 6px 18px rgba(30,64,175,0.32);}
+.login-btn:hover{background:#1e3a8a;transform:translateY(-1px);box-shadow:0 10px 26px rgba(30,64,175,0.4);}
+.login-btn:active{transform:translateY(0);}
+.login-foot{text-align:center;font-size:10.5px;color:var(--text3);margin-top:18px;letter-spacing:0.3px;}
 
 /* NAV */
 .nav{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;height:50px;position:sticky;top:0;z-index:300;gap:0;overflow-x:auto;}
@@ -235,12 +249,17 @@ select option{background:var(--bg2);}
 <!-- NAV -->
 <!-- LOGIN OVERLAY -->
 <div id="login-overlay">
+  <div class="login-bg"></div>
+  <div class="login-orb o1"></div>
+  <div class="login-orb o2"></div>
+  <div class="login-orb o3"></div>
+  <div class="login-grid"></div>
   <div class="login-box">
     <div class="login-logo">
       <img src="/logo.jpg" alt="The Impact Engine">
     </div>
-    <div class="login-title">Smart Resource Management & Cost Analysis Hub</div>
-    <div class="login-sub">Sign in to access your dashboard</div>
+    <div class="login-title">RMCA App</div>
+    <div class="login-sub">Smart Resource Management and Cost Analysis Hub</div>
     <div class="login-field">
       <label>Username</label>
       <input type="text" id="login-user" placeholder="Enter username" autocomplete="username">
@@ -251,24 +270,25 @@ select option{background:var(--bg2);}
     </div>
     <div class="login-err" id="login-err">Incorrect username or password.</div>
     <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-foot">The Impact Engine · Internal Tool</div>
   </div>
 </div>
 
 <nav class="nav">
   <div class="brand">
-    <div class="brand-mark">TIE</div>
-    <div>ResourcIQ <span class="brand-sub">The Impact Engine</span></div>
+    <div class="brand-mark">RM</div>
+    <div>RMCA App <span class="brand-sub">The Impact Engine</span></div>
   </div>
   <div class="nav-tab active" onclick="goTab('dashboard',this)">Dashboard</div>
   <div class="nav-tab" onclick="goTab('team',this)">Team <span class="tab-count" id="tc-team">0</span></div>
   <div class="nav-tab" onclick="goTab('workload',this)">Workload</div>
   <div class="nav-tab" onclick="goTab('clients',this)">Clients <span class="tab-count" id="tc-clients">0</span></div>
   <div class="nav-tab" onclick="goTab('projects',this)">Projects <span class="tab-count" id="tc-projects">0</span></div>
-  <div class="nav-tab" onclick="goTab('silos',this)">Silos <span class="tab-count" id="tc-silos">0</span></div>
+  <div class="nav-tab" onclick="goTab('insights',this)">Insights</div>
   <div class="nav-tab" onclick="goTab('hours',this)">Hour Logs</div>
   <div class="nav-tab" onclick="goTab('costs',this)">Cost Analysis</div>
   <div style="margin-left:auto;flex-shrink:0;">
-    <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px;" onclick="doLogout()">&#x2192; Sign Out</button>
+    <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px;" onclick="doLogout()">Sign Out</button>
   </div>
 </nav>
 
@@ -277,7 +297,7 @@ select option{background:var(--bg2);}
   <div class="page-hdr">
     <div class="page-hdr-left">
       <div class="page-title">Resource Overview</div>
-      <div class="page-sub">The Impact Engine — Resource & Cost Intelligence</div>
+      <div class="page-sub">The Impact Engine · Resource and Cost Intelligence</div>
     </div>
     <div style="display:flex;gap:8px;">
       <button class="btn btn-ghost btn-sm" onclick="openModal('modal-log')">+ Log Hours</button>
@@ -290,7 +310,7 @@ select option{background:var(--bg2);}
     <div class="card"><div class="card-title">Team Utilisation (Hours/Month)</div><div id="dash-util"></div></div>
   </div>
   <div class="card">
-    <div class="section-hdr"><div class="section-title">Active Projects — Snapshot</div></div>
+    <div class="section-hdr"><div class="section-title">Active Projects · Snapshot</div></div>
     <div class="tbl-wrap" style="border:none;border-radius:0;">
       <table id="dash-proj-table">
         <thead><tr><th>Project / Client</th><th>Team Size</th><th>Hours/Mo</th><th>Project Cost</th><th>Retainer</th><th>Margin</th><th>Margin %</th><th>Status</th></tr></thead>
@@ -312,6 +332,17 @@ select option{background:var(--bg2);}
     </div>
   </div>
   <div class="filter-row" id="team-dept-filters"></div>
+  <div class="filter-row">
+    <input id="team-search" placeholder="Search name or role" oninput="renderTeam()" style="min-width:200px">
+    <select id="team-sort" onchange="renderTeam()">
+      <option value="name">Sort: Name (A to Z)</option>
+      <option value="salary">Sort: Salary (high to low)</option>
+      <option value="pos">Sort: Position (A to Z)</option>
+      <option value="dept">Sort: Department</option>
+      <option value="alloc">Sort: Hours Allocated (high to low)</option>
+      <option value="roi">Sort: ROI (high to low)</option>
+    </select>
+  </div>
   <div class="tbl-wrap">
     <table>
       <thead><tr><th>#</th><th>Name</th><th>Department</th><th>Position</th><th>Monthly Salary</th><th>Base Pay / hr</th><th>Hours/mo</th><th>Projects Assigned</th><th>Hrs Allocated</th><th>Available Hrs</th><th>ROI</th><th></th></tr></thead>
@@ -341,6 +372,16 @@ select option{background:var(--bg2);}
     </div>
     <button class="btn btn-ghost btn-sm" onclick="openModal('modal-client')">+ Add Client</button>
   </div>
+  <div class="filter-row">
+    <input id="client-search" placeholder="Search client or service" oninput="renderClients()" style="min-width:200px">
+    <select id="client-sort" onchange="renderClients()">
+      <option value="size">Sort: Project Size (large to small)</option>
+      <option value="name">Sort: Name (A to Z)</option>
+      <option value="retainer">Sort: Retainer (high to low)</option>
+      <option value="margin">Sort: Margin (high to low)</option>
+      <option value="sector">Sort: Sector / Service</option>
+    </select>
+  </div>
   <div class="tbl-wrap">
     <table>
       <thead><tr><th>#</th><th>Client Name</th><th>Services</th><th>Monthly Retainer</th><th>Projects</th><th>Total Team Cost</th><th>Margin</th><th>Margin %</th><th></th></tr></thead>
@@ -358,20 +399,29 @@ select option{background:var(--bg2);}
     </div>
     <button class="btn btn-primary btn-sm" onclick="openModal('modal-project')">+ New Project</button>
   </div>
+  <div class="filter-row">
+    <input id="proj-search" placeholder="Search project or client" oninput="renderProjects()" style="min-width:200px">
+    <select id="proj-sort" onchange="renderProjects()">
+      <option value="value">Sort: Value (high to low)</option>
+      <option value="name">Sort: Name (A to Z)</option>
+      <option value="margin">Sort: Margin % (low to high)</option>
+      <option value="cost">Sort: Project Cost (high to low)</option>
+      <option value="status">Sort: Status</option>
+    </select>
+  </div>
   <div id="proj-list"></div>
 </div>
 
-<!-- ═══════════════════════════════════════════ SILOS ══ -->
-<div class="page" id="page-silos">
+<!-- ═══════════════════════════════════════════ INSIGHTS ══ -->
+<div class="page" id="page-insights">
   <div class="page-hdr">
     <div class="page-hdr-left">
-      <div class="page-title">Silos</div>
-      <div class="page-sub">Dedicated cross-functional teams permanently assigned to a fixed set of clients</div>
+      <div class="page-title">Insights</div>
+      <div class="page-sub">Optimisation advice for resource management and profitability</div>
     </div>
-    <button class="btn btn-primary btn-sm" onclick="openModal('modal-silo')">+ Create Silo</button>
   </div>
-  <div class="stats-row" id="silo-stats"></div>
-  <div class="silo-grid" id="silo-grid"></div>
+  <div class="stats-row" id="insights-stats"></div>
+  <div id="insights-body"></div>
 </div>
 
 
@@ -472,10 +522,13 @@ select option{background:var(--bg2);}
     <div class="form-grid g2">
       <div class="form-field"><label>Project Name</label><input id="p-name" placeholder="e.g. Sheraton Grand Pune"></div>
       <div class="form-field"><label>Client</label>
-        <select id="p-client"><option value="">— Select Client —</option></select>
+        <select id="p-client"><option value="">Select Client</option></select>
       </div>
     </div>
-    <div class="form-grid g3">
+    <div class="form-grid g4">
+      <div class="form-field"><label>Type</label>
+        <select id="p-type"><option value="retainer">Retainer (monthly)</option><option value="onetime">One Time</option></select>
+      </div>
       <div class="form-field"><label>Month</label>
         <select id="p-month">
           <option>January</option><option>February</option><option selected>March</option>
@@ -489,14 +542,22 @@ select option{background:var(--bg2);}
         <select id="p-status"><option>Active</option><option>On Hold</option><option>Completed</option><option>Planning</option></select>
       </div>
     </div>
-    <div class="form-grid" style="grid-template-columns:1fr;">
-      <div class="form-field"><label>Retainer / Budget Override (₹) — leave blank to use client retainer</label>
+    <div class="form-grid g2">
+      <div class="form-field"><label>Retainer / Budget Override (₹), leave blank to use client retainer</label>
         <input id="p-budget" type="number" placeholder="Leave blank to inherit from client">
       </div>
+      <div class="form-field"><label>Shoot Cost (₹), optional</label>
+        <input id="p-shoot" type="number" placeholder="e.g. 10000">
+      </div>
     </div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer;margin-bottom:4px;">
+      <input type="checkbox" id="p-nofixed" style="accent-color:var(--accent);width:14px;height:14px;">
+      Disable shared fixed costs for this project (admin, HR, core, misc, GSE will not be charged)
+    </label>
     <hr class="divider">
     <div class="section-hdr"><div class="section-title">Assign Team Members</div><button class="btn btn-ghost btn-sm" onclick="addAllocRow()">+ Add Row</button></div>
     <div id="alloc-rows"></div>
+    <div id="p-resource-insight" style="margin-top:10px"></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('modal-project')">Cancel</button>
       <button class="btn btn-primary" id="p-save-btn" onclick="saveProject()">Create Project</button>
@@ -525,54 +586,6 @@ select option{background:var(--bg2);}
     </div>
   </div>
 </div>
-
-<!-- Create / Edit Silo -->
-<div class="overlay" id="modal-silo">
-  <div class="modal modal-lg">
-    <div class="modal-title" id="silo-modal-title">Create Silo</div>
-    <input type="hidden" id="silo-edit-id" value="">
-    <div class="form-grid g2">
-      <div class="form-field"><label>Silo Name</label><input id="s-name" placeholder="e.g. Hospitality Silo"></div>
-      <div class="form-field"><label>Silo Lead (Account Manager)</label>
-        <select id="s-lead"><option value="">— Select Lead —</option></select>
-      </div>
-    </div>
-    <div class="form-grid g2">
-      <div class="form-field"><label>Colour Theme</label>
-        <select id="s-color">
-          <option value="blue">Blue</option><option value="green">Green</option>
-          <option value="purple">Purple</option><option value="amber">Amber</option>
-          <option value="teal">Teal</option><option value="pink">Pink</option>
-          <option value="red">Red</option>
-        </select>
-      </div>
-      <div class="form-field"><label>Focus / Description</label>
-        <input id="s-desc" placeholder="e.g. Hotels, F&B, Luxury Brands">
-      </div>
-    </div>
-    <hr class="divider">
-    <div class="section-hdr"><div class="section-title">Team Members</div><span class="xs muted">Pick members permanently assigned to this silo</span></div>
-    <div id="s-members-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;margin-bottom:16px;max-height:260px;overflow-y:auto;padding:2px;"></div>
-    <hr class="divider">
-    <div class="section-hdr"><div class="section-title">Assigned Clients</div><span class="xs muted">Clients this silo is responsible for</span></div>
-    <div id="s-clients-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;margin-bottom:4px;max-height:200px;overflow-y:auto;padding:2px;"></div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modal-silo')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveSilo()">Save Silo</button>
-    </div>
-  </div>
-</div>
-
-<!-- Silo Detail Modal -->
-<div class="overlay" id="modal-silo-detail">
-  <div class="modal modal-xl">
-    <div id="silo-detail-content"></div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modal-silo-detail')">Close</button>
-    </div>
-  </div>
-</div>
-
 
 <div class="overlay" id="modal-snap">
   <div class="modal modal-xl">
@@ -716,7 +729,7 @@ const SEED_CLIENTS = [
   {id:20,name:'Nikai',services:'Social Media Management & Performance Marketing',retainer:45000},
   {id:21,name:"Pete's Pure",services:'Social Media Management',retainer:52396},
   {id:22,name:'Premier Lifestyle Beauty',services:'Social Media Management & Strategy',retainer:30000},
-  {id:23,name:'Pushpam Group — Pucham Sanckruti, Karjat',services:'Social Media Management & Branding',retainer:65000},
+  {id:23,name:'Pushpam Group - Pucham Sanckruti, Karjat',services:'Social Media Management & Branding',retainer:65000},
   {id:24,name:'SB Patil Group',services:'Social Media Management & Branding',retainer:62000},
   {id:25,name:'Sheraton Grand Pune',services:'Social Media Management & Branding',retainer:99000},
   {id:26,name:'Sun City Tours and Travel',services:'Social Media Management',retainer:35000},
@@ -899,23 +912,24 @@ function av(member, size='sm'){
   return `<div class="av av-${size}" style="background:${c}20;color:${c}">${initials(member.name)}</div>`;
 }
 
-// Project computed values
-// Admin overhead — fixed at 40K/month (Neha's admin portion), split evenly across every project.
-// (Neha's other 15K is Influencer Marketing & PR work, not admin overhead — excluded here.)
-const ADMIN_COST_MONTHLY = 40000;
-function adminPerProject(){
-  return projects.length ? ADMIN_COST_MONTHLY/projects.length : 0;
-}
+// Account Management and Social Media Managers are grouped into one bracket.
+const BRACKET_MERGE = {
+  'Account Management Team':'Account & Social Media',
+  'Social Media Team':'Account & Social Media',
+};
+function bracketOf(dept){ return BRACKET_MERGE[dept] || dept; }
 
-// HR overhead — rest of the HR & Admin team's salaries (everyone except Neha), split evenly.
+// Project computed values
+// Admin overhead — fixed 40K/month (Neha's admin portion).
+// (Neha's other 15K is Influencer Marketing & PR work, not admin overhead, excluded here.)
+const ADMIN_COST_MONTHLY = 40000;
+
+// HR overhead — rest of the HR & Admin team's salaries (everyone except Neha).
 function hrCostMonthly(){
   return team.filter(m=>m.dept==='HR & Admin Team' && m.name!=='Neha Vadhariya').reduce((s,m)=>s+m.salary,0);
 }
-function hrPerProject(){
-  return projects.length ? hrCostMonthly()/projects.length : 0;
-}
 
-// Core team salaries — fixed, split evenly across every project.
+// Core team salaries — fixed 3L/month.
 const CORE_COST_MONTHLY = 300000;
 
 // Misc tool/subscription costs. SEO and Web Dev tools only apply to projects
@@ -923,6 +937,16 @@ const CORE_COST_MONTHLY = 300000;
 const MISC_SEO_MONTHLY    = 13000 + 15000; // Ahrefs, Localo
 const MISC_WEBDEV_MONTHLY = 5000;          // Envato/Unstop & Figma
 const MISC_FIXED_MONTHLY  = 12000 + 6000 + 1200 + 4000 + 3000 + 20000; // Teams, Higgsfield, Canva, AI Tools, Storage, Rent
+
+// GSE cost — applies to projects with a video editor, except the excluded clients.
+const GSE_MONTHLY = 25000;
+const GSE_EXCLUDED_CLIENTS = ["Aeka's Coffee", "SBII"];
+
+// How fixed costs are shared. Each shared pool is split so a BASE fraction is spread
+// equally across all eligible projects (so small projects still carry a minimum share)
+// and the REMAINDER is spread proportional to project value/retainer (so large projects
+// carry more). Adjust FIXED_COST_BASE_RATIO between 0 (all by value) and 1 (all equal).
+const FIXED_COST_BASE_RATIO = 0.4;
 
 function isSEOProject(proj){
   return (proj.allocations||[]).some(a=>a.role.toLowerCase().includes('seo'));
@@ -933,11 +957,6 @@ function isWebDevProject(proj){
     return r.includes('web design')||r.includes('web dev')||r.includes('ui/ux');
   });
 }
-
-// GSE cost — split across every project with a video editor, except the excluded clients.
-const GSE_MONTHLY = 25000;
-const GSE_EXCLUDED_CLIENTS = ["Aeka's Coffee", "SBII"];
-
 function isVideoEditorProject(proj){
   return (proj.allocations||[]).some(a=>a.role.toLowerCase().includes('video editor'));
 }
@@ -946,6 +965,29 @@ function isGSEEligible(proj){
   if(client && GSE_EXCLUDED_CLIENTS.includes(client.name)) return false;
   return isVideoEditorProject(proj);
 }
+
+function retainerOf(proj){
+  const client = byId(clients, proj.clientId);
+  return proj.budgetOverride || (client ? client.retainer : 0);
+}
+
+// This project's share of a shared cost pool, using base + proportionate-by-value.
+// scopeFn decides which projects the pool applies to. Projects with fixed costs
+// disabled are excluded entirely (they carry no shared overhead, and the pool is
+// distributed across the remaining eligible projects).
+function poolShare(proj, poolMonthly, scopeFn){
+  if(proj.fixedCostsDisabled || !scopeFn(proj) || !poolMonthly) return 0;
+  const eligible = projects.filter(p=>!p.fixedCostsDisabled && scopeFn(p));
+  const n = eligible.length;
+  if(!n) return 0;
+  const base = (poolMonthly * FIXED_COST_BASE_RATIO) / n;
+  const propPool = poolMonthly * (1 - FIXED_COST_BASE_RATIO);
+  const totalVal = eligible.reduce((s,p)=>s+retainerOf(p),0);
+  const prop = totalVal>0 ? propPool * (retainerOf(proj)/totalVal) : propPool/n;
+  return base + prop;
+}
+
+const scopeAll = ()=>true;
 
 function projCalc(proj){
   const client = byId(clients, proj.clientId);
@@ -968,20 +1010,19 @@ function projCalc(proj){
   let loggedCost = 0;
   projLogs.forEach(l=>{ const m=byId(team,l.memberId); if(m) loggedCost+=m.rate*l.hours; });
 
-  const adminCost = Math.round(adminPerProject());
-  const hrCost = Math.round(hrPerProject());
-  const shootCost = proj.shootCost||0;
-  const coreCost = projects.length ? Math.round(CORE_COST_MONTHLY/projects.length) : 0;
+  const fixedDisabled = !!proj.fixedCostsDisabled;
+  const shootCost = proj.shootCost||0; // direct project cost, kept even if shared fixed costs are off
 
-  const miscFixedCost = projects.length ? Math.round(MISC_FIXED_MONTHLY/projects.length) : 0;
-  const seoProjectCount = projects.filter(isSEOProject).length;
-  const webDevProjectCount = projects.filter(isWebDevProject).length;
-  const miscSeoCost = isSEOProject(proj) && seoProjectCount ? Math.round(MISC_SEO_MONTHLY/seoProjectCount) : 0;
-  const miscWebDevCost = isWebDevProject(proj) && webDevProjectCount ? Math.round(MISC_WEBDEV_MONTHLY/webDevProjectCount) : 0;
+  const adminCost = Math.round(poolShare(proj, ADMIN_COST_MONTHLY, scopeAll));
+  const hrCost    = Math.round(poolShare(proj, hrCostMonthly(), scopeAll));
+  const coreCost  = Math.round(poolShare(proj, CORE_COST_MONTHLY, scopeAll));
+
+  const miscFixedCost  = Math.round(poolShare(proj, MISC_FIXED_MONTHLY, scopeAll));
+  const miscSeoCost    = Math.round(poolShare(proj, MISC_SEO_MONTHLY, isSEOProject));
+  const miscWebDevCost = Math.round(poolShare(proj, MISC_WEBDEV_MONTHLY, isWebDevProject));
   const miscCost = miscFixedCost + miscSeoCost + miscWebDevCost;
 
-  const gseProjectCount = projects.filter(isGSEEligible).length;
-  const gseCost = isGSEEligible(proj) && gseProjectCount ? Math.round(GSE_MONTHLY/gseProjectCount) : 0;
+  const gseCost = Math.round(poolShare(proj, GSE_MONTHLY, isGSEEligible));
 
   const projectCost = teamCost + adminCost + hrCost + shootCost + coreCost + miscCost + gseCost;
 
@@ -989,7 +1030,7 @@ function projCalc(proj){
   const margin = retainer - projectCost;
   const marginPct = retainer > 0 ? Math.round(margin/retainer*100) : 0;
 
-  return {retainer,projectCost,teamCost,adminCost,hrCost,shootCost,coreCost,miscCost,miscFixedCost,miscSeoCost,miscWebDevCost,gseCost,margin,marginPct,totalHours,memberBreakdown,loggedCost,client};
+  return {retainer,projectCost,teamCost,adminCost,hrCost,shootCost,coreCost,miscCost,miscFixedCost,miscSeoCost,miscWebDevCost,gseCost,fixedDisabled,margin,marginPct,totalHours,memberBreakdown,loggedCost,client};
 }
 
 function editProject(id){
@@ -1001,7 +1042,6 @@ function editProject(id){
 
 // ══ MODAL ══
 function openModal(id){
-  if(id==='modal-silo'){ openSiloModal(); return; }
   if(id==='modal-project') populateProjModal();
   if(id==='modal-log') populateLogModal();
   if(id==='modal-client') populateClientModal();
@@ -1054,8 +1094,6 @@ function renderTeam(){
     `<span class="filter-pill ${!teamDeptFilter?'active':''}" onclick="setTeamDept('')">All</span>` +
     depts.map(d=>`<span class="filter-pill ${teamDeptFilter===d?'active':''}" onclick="setTeamDept('${d}')">${DEPT_META[d]?.short||d}</span>`).join('');
 
-  const filtered = teamDeptFilter ? team.filter(m=>m.dept===teamDeptFilter) : team;
-
   // Allocated hours per member across all projects
   const allocMap = {};
   projects.forEach(p=>{
@@ -1069,13 +1107,28 @@ function renderTeam(){
 
   const revMap = memberRevenueMap();
 
+  const q = (document.getElementById('team-search')?.value||'').toLowerCase().trim();
+  const sortBy = document.getElementById('team-sort')?.value || 'name';
+  let filtered = teamDeptFilter ? team.filter(m=>m.dept===teamDeptFilter) : [...team];
+  if(q) filtered = filtered.filter(m=>m.name.toLowerCase().includes(q)||(m.pos||'').toLowerCase().includes(q));
+  const hoursOf = m => (allocMap[m.id]?.hours)||0;
+  const roiOf = m => m.salary>0 ? (revMap[m.id]||0)/m.salary : 0;
+  filtered.sort((a,b)=>{
+    if(sortBy==='salary') return b.salary-a.salary;
+    if(sortBy==='pos') return (a.pos||'').localeCompare(b.pos||'');
+    if(sortBy==='dept') return bracketOf(a.dept).localeCompare(bracketOf(b.dept))||a.name.localeCompare(b.name);
+    if(sortBy==='alloc') return hoursOf(b)-hoursOf(a);
+    if(sortBy==='roi') return roiOf(b)-roiOf(a);
+    return a.name.localeCompare(b.name);
+  });
+
   const tbody = document.getElementById('team-body');
   tbody.innerHTML = filtered.map((m,i)=>{
     const alloc = allocMap[m.id]||{hours:0,projs:[]};
     const available = Math.max(0, HOURS_MONTH - alloc.hours);
     const availPct = Math.round(available/HOURS_MONTH*100);
     const barColor = availPct > 50 ? 'var(--green)' : availPct > 20 ? 'var(--amber)' : 'var(--red)';
-    const projBadges = alloc.projs.map(pid=>{ const p=byId(projects,pid); return p?`<span class="badge badge-blue" style="font-size:10px">${p.name.split('—')[0].trim()}</span>`:''; }).join(' ');
+    const projBadges = alloc.projs.map(pid=>{ const p=byId(projects,pid); return p?`<span class="badge badge-blue" style="font-size:10px">${p.name}</span>`:''; }).join(' ');
     const revenue = revMap[m.id]||0;
     const roi = m.salary>0 ? revenue/m.salary : 0;
     const roiColor = roi>=2 ? 'var(--green)' : roi>=1 ? 'var(--amber)' : 'var(--red)';
@@ -1087,7 +1140,7 @@ function renderTeam(){
       <td class="mono">${inr(m.salary)}</td>
       <td class="mono fw6">${inr(m.rate)}</td>
       <td class="mono">${HOURS_MONTH}h</td>
-      <td>${projBadges||'<span class="xs muted">—</span>'}</td>
+      <td>${projBadges||'<span class="xs muted">None</span>'}</td>
       <td class="mono">${fh(alloc.hours)}</td>
       <td>
         <div style="display:flex;align-items:center;gap:6px">
@@ -1110,12 +1163,13 @@ let workloadDeptFilter = '';
 function setWorkloadDept(d){ workloadDeptFilter=d; renderWorkload(); }
 
 function renderWorkload(){
-  const depts = [...new Set(team.map(m=>m.dept))].sort();
+  // Group by bracket (Account Management + Social Media merge into one bracket).
+  const brackets = [...new Set(team.map(m=>bracketOf(m.dept)))].sort();
   document.getElementById('workload-dept-filters').innerHTML =
     `<span class="filter-pill ${!workloadDeptFilter?'active':''}" onclick="setWorkloadDept('')">All</span>` +
-    depts.map(d=>`<span class="filter-pill ${workloadDeptFilter===d?'active':''}" onclick="setWorkloadDept('${d}')">${DEPT_META[d]?.short||d}</span>`).join('');
+    brackets.map(b=>`<span class="filter-pill ${workloadDeptFilter===b?'active':''}" onclick="setWorkloadDept('${b.replace(/'/g,"\\'")}')">${b}</span>`).join('');
 
-  // memberId -> list of {id,name} projects
+  // memberId -> list of projects
   const projMap = {};
   team.forEach(m=>projMap[m.id]=[]);
   projects.forEach(p=>{
@@ -1124,13 +1178,13 @@ function renderWorkload(){
     });
   });
 
-  const filtered = workloadDeptFilter ? team.filter(m=>m.dept===workloadDeptFilter) : team;
-  const byDept = {};
-  filtered.forEach(m=>{ (byDept[m.dept]=byDept[m.dept]||[]).push(m); });
+  const filtered = workloadDeptFilter ? team.filter(m=>bracketOf(m.dept)===workloadDeptFilter) : team;
+  const byBracket = {};
+  filtered.forEach(m=>{ const b=bracketOf(m.dept); (byBracket[b]=byBracket[b]||[]).push(m); });
 
-  const orderedDepts = Object.keys(byDept).sort();
-  document.getElementById('workload-body').innerHTML = orderedDepts.map(dept=>{
-    const members = byDept[dept].slice().sort((a,b)=>(projMap[b.id]||[]).length-(projMap[a.id]||[]).length);
+  const ordered = Object.keys(byBracket).sort();
+  document.getElementById('workload-body').innerHTML = ordered.map(bracket=>{
+    const members = byBracket[bracket].slice().sort((a,b)=>(projMap[b.id]||[]).length-(projMap[a.id]||[]).length);
     const rows = members.map(m=>{
       const projs = projMap[m.id]||[];
       const badges = projs.map(p=>`<span class="badge badge-blue">${p.name}</span>`).join(' ');
@@ -1139,6 +1193,7 @@ function renderWorkload(){
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span class="fw6" style="font-size:12.5px">${m.name}</span>
+            ${deptTag(m.dept)}
             <span class="xs muted">${m.pos}</span>
             <span class="badge ${projs.length?'badge-green':'badge-gray'}" style="margin-left:auto">${projs.length} project${projs.length===1?'':'s'}</span>
           </div>
@@ -1147,7 +1202,7 @@ function renderWorkload(){
       </div>`;
     }).join('');
     return `<div class="card" style="margin-bottom:14px">
-      <div class="card-title" style="display:flex;align-items:center;gap:8px">${deptTag(dept)} <span class="xs muted">${members.length} member${members.length===1?'':'s'}</span></div>
+      <div class="card-title" style="display:flex;align-items:center;gap:8px">${bracket} <span class="xs muted">${members.length} member${members.length===1?'':'s'}</span></div>
       ${rows}
     </div>`;
   }).join('') || '<div class="tbl-empty">No team members</div>';
@@ -1208,9 +1263,21 @@ function renderClients(){
 
   // "Project size" = total team members allocated across a client's projects
   const sizeOf = c => projects.filter(p=>p.clientId==c.id).reduce((s,p)=>s+(p.allocations||[]).length,0);
-  const sorted = [...clients].sort((a,b)=>sizeOf(b)-sizeOf(a));
+  const costOf = c => projects.filter(p=>p.clientId==c.id).reduce((s,p)=>s+projCalc(p).projectCost,0);
 
-  tbody.innerHTML = sorted.map((c,i)=>{
+  const q = (document.getElementById('client-search')?.value||'').toLowerCase().trim();
+  const sortBy = document.getElementById('client-sort')?.value || 'size';
+  let list = [...clients];
+  if(q) list = list.filter(c=>c.name.toLowerCase().includes(q)||(c.services||'').toLowerCase().includes(q));
+  list.sort((a,b)=>{
+    if(sortBy==='name') return a.name.localeCompare(b.name);
+    if(sortBy==='retainer') return (b.retainer||0)-(a.retainer||0);
+    if(sortBy==='sector') return (a.services||'').localeCompare(b.services||'')||a.name.localeCompare(b.name);
+    if(sortBy==='margin') return ((b.retainer||0)-costOf(b))-((a.retainer||0)-costOf(a));
+    return sizeOf(b)-sizeOf(a);
+  });
+
+  tbody.innerHTML = list.map((c,i)=>{
     const cProjs = projects.filter(p=>p.clientId==c.id);
     let totalCost = 0;
     cProjs.forEach(p=>{ totalCost += projCalc(p).projectCost; });
@@ -1221,11 +1288,11 @@ function renderClients(){
       <td class="muted xs mono">${i+1}</td>
       <td class="fw6">${c.name}</td>
       <td class="small muted" style="max-width:200px">${c.services}</td>
-      <td class="mono fw6 c-green">${c.retainer?inr(c.retainer):'<span class="muted">—</span>'}</td>
+      <td class="mono fw6 c-green">${c.retainer?inr(c.retainer):'<span class="muted">None</span>'}</td>
       <td>${cProjs.map(p=>`<span class="badge badge-blue" style="font-size:10px">${p.name}</span>`).join(' ')||'<span class="xs muted">No projects</span>'}</td>
-      <td class="mono">${totalCost?inr(totalCost):'—'}</td>
-      <td class="mono" style="color:${mpColor}">${margin?inr(margin):'—'}</td>
-      <td class="mono fw6" style="color:${mpColor}">${c.retainer&&totalCost?mp+'%':'—'}</td>
+      <td class="mono">${totalCost?inr(totalCost):'None'}</td>
+      <td class="mono" style="color:${mpColor}">${margin?inr(margin):'None'}</td>
+      <td class="mono fw6" style="color:${mpColor}">${c.retainer&&totalCost?mp+'%':'None'}</td>
       <td style="white-space:nowrap"><button class="btn btn-ghost btn-xs" style="margin-right:4px" onclick="editClient(${c.id})">Edit</button><button class="btn btn-danger btn-xs" onclick="deleteClient(${c.id})">×</button></td>
     </tr>`;
   }).join('');
@@ -1282,8 +1349,19 @@ function editClient(id){
 }
 
 function deleteClient(id){
-  if(!confirm('Delete this client?')) return;
-  clients=clients.filter(c=>c.id!==id); save(); renderClients();
+  const linked = projects.filter(p=>p.clientId==id);
+  const msg = linked.length
+    ? `Delete this client and its ${linked.length} linked project${linked.length===1?'':'s'} (and related hour logs) everywhere?`
+    : 'Delete this client?';
+  if(!confirm(msg)) return;
+  const projIds = linked.map(p=>p.id);
+  clients  = clients.filter(c=>c.id!==id);
+  projects = projects.filter(p=>p.clientId!=id);
+  logs     = logs.filter(l=>!projIds.includes(l.projId));
+  save();
+  renderClients(); renderProjects(); renderDashboard(); renderHours();
+  document.getElementById('tc-clients').textContent = clients.length;
+  document.getElementById('tc-projects').textContent = projects.length;
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1291,61 +1369,120 @@ function deleteClient(id){
 // ══════════════════════════════════════════════════════════
 let allocRowCount = 0;
 
+// Hours already allocated to each member across all projects (optionally excluding one).
+function memberAllocatedHours(excludeProjId){
+  const map = {};
+  team.forEach(m=>map[m.id]=0);
+  projects.forEach(p=>{
+    if(excludeProjId && p.id===excludeProjId) return;
+    (p.allocations||[]).forEach(a=>{ if(map[a.memberId]!=null) map[a.memberId]+=(+(a.hoursPerDay*22).toFixed(1)); });
+  });
+  return map;
+}
+
+// Build member <option> list showing each member's current free hours (insight).
+function memberOptionsHTML(selectedId, freeMap){
+  return team.map(m=>{
+    const free = Math.round(freeMap[m.id]);
+    const tag = free<=0 ? 'FULL' : free+'h free';
+    return `<option value="${m.id}"${m.id===selectedId?' selected':''}>${m.name} · ${DEPT_META[m.dept]?.short||''} · ${tag} · ${inr(m.rate)}/hr</option>`;
+  }).join('');
+}
+
 function populateProjModal(editId=null){
   const sel = document.getElementById('p-client');
-  sel.innerHTML = '<option value="">— Select Client —</option>' + clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  sel.innerHTML = '<option value="">Select Client</option>' + clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
   allocRowCount = 0;
   document.getElementById('alloc-rows').innerHTML = '';
   document.getElementById('p-edit-id').value = editId||'';
+  document.getElementById('p-resource-insight').innerHTML = '';
 
-  if(editId){
-    const proj = byId(projects, editId);
-    if(proj){
-      document.getElementById('p-modal-title').textContent = 'Edit Project';
-      document.getElementById('p-save-btn').textContent = 'Update Project';
-      document.getElementById('p-name').value = proj.name;
-      document.getElementById('p-client').value = proj.clientId;
-      document.getElementById('p-month').value = proj.month;
-      document.getElementById('p-year').value = proj.year;
-      document.getElementById('p-status').value = proj.status;
-      document.getElementById('p-budget').value = proj.budgetOverride||'';
-      (proj.allocations||[]).forEach(a=>{
-        allocRowCount++;
-        const rid='ar'+allocRowCount;
-        const memberOpts=team.map(m=>`<option value="${m.id}"${m.id===a.memberId?' selected':''}>${m.name} — ${DEPT_META[m.dept]?.short||''} (${inr(m.rate)}/hr)</option>`).join('');
-        const div=document.createElement('div');
-        div.id=rid;
-        div.style.cssText='display:grid;grid-template-columns:2fr 1.5fr 1fr auto;gap:8px;align-items:end;margin-bottom:8px;';
-        div.innerHTML=`
-          <div class="form-field"><label>Team Member</label><select class="ar-member"><option value="">— Select —</option>${memberOpts}</select></div>
-          <div class="form-field"><label>Role on Project</label><input class="ar-role" placeholder="e.g. Graphic Designer" value="${a.role||''}"></div>
-          <div class="form-field"><label>Hours / Day</label><input class="ar-hpd" type="number" value="${a.hoursPerDay}" min="0.5" step="0.5"></div>
-          <button class="btn btn-danger btn-sm" style="margin-bottom:1px" onclick="document.getElementById('${rid}').remove()">×</button>`;
-        document.getElementById('alloc-rows').appendChild(div);
-      });
-      return;
-    }
+  const proj = editId ? byId(projects, editId) : null;
+  const freeMap = memberAllocatedHours(editId||null);
+  Object.keys(freeMap).forEach(id=>{ freeMap[id] = HOURS_MONTH - freeMap[id]; });
+
+  if(proj){
+    document.getElementById('p-modal-title').textContent = 'Edit Project';
+    document.getElementById('p-save-btn').textContent = 'Update Project';
+    document.getElementById('p-name').value = proj.name;
+    document.getElementById('p-client').value = proj.clientId;
+    document.getElementById('p-type').value = proj.oneTime ? 'onetime' : 'retainer';
+    document.getElementById('p-month').value = proj.month;
+    document.getElementById('p-year').value = proj.year;
+    document.getElementById('p-status').value = proj.status;
+    document.getElementById('p-budget').value = proj.budgetOverride||'';
+    document.getElementById('p-shoot').value = proj.shootCost||'';
+    document.getElementById('p-nofixed').checked = !!proj.fixedCostsDisabled;
+    (proj.allocations||[]).forEach(a=>addAllocRow(a, freeMap));
+    updateResourceInsight();
+    return;
   }
   document.getElementById('p-modal-title').textContent = 'New Project';
   document.getElementById('p-save-btn').textContent = 'Create Project';
   document.getElementById('p-name').value='';
+  document.getElementById('p-type').value='retainer';
   document.getElementById('p-budget').value='';
-  addAllocRow(); addAllocRow();
+  document.getElementById('p-shoot').value='';
+  document.getElementById('p-nofixed').checked=false;
+  addAllocRow(null, freeMap); addAllocRow(null, freeMap);
+  updateResourceInsight();
 }
 
-function addAllocRow(){
+function currentFreeMap(){
+  const editId = parseInt(document.getElementById('p-edit-id').value)||null;
+  const freeMap = memberAllocatedHours(editId);
+  Object.keys(freeMap).forEach(id=>{ freeMap[id] = HOURS_MONTH - freeMap[id]; });
+  return freeMap;
+}
+
+function addAllocRow(alloc, freeMap){
+  if(!freeMap) freeMap = currentFreeMap();
   allocRowCount++;
   const rid = 'ar'+allocRowCount;
-  const memberOpts = team.map(m=>`<option value="${m.id}">${m.name} — ${DEPT_META[m.dept]?.short||''} (${inr(m.rate)}/hr)</option>`).join('');
+  const opts = memberOptionsHTML(alloc?alloc.memberId:null, freeMap);
   const div = document.createElement('div');
   div.id = rid;
   div.style.cssText = 'display:grid;grid-template-columns:2fr 1.5fr 1fr auto;gap:8px;align-items:end;margin-bottom:8px;';
   div.innerHTML = `
-    <div class="form-field"><label>Team Member</label><select class="ar-member"><option value="">— Select —</option>${memberOpts}</select></div>
-    <div class="form-field"><label>Role on Project</label><input class="ar-role" placeholder="e.g. Graphic Designer"></div>
-    <div class="form-field"><label>Hours / Day</label><input class="ar-hpd" type="number" value="2" min="0.5" step="0.5"></div>
-    <button class="btn btn-danger btn-sm" style="margin-bottom:1px" onclick="document.getElementById('${rid}').remove()">×</button>`;
+    <div class="form-field"><label>Team Member</label><select class="ar-member" onchange="updateResourceInsight()"><option value="">Select</option>${opts}</select></div>
+    <div class="form-field"><label>Role on Project</label><input class="ar-role" placeholder="e.g. Graphic Designer" value="${alloc?(alloc.role||''):''}"></div>
+    <div class="form-field"><label>Hours / Day</label><input class="ar-hpd" type="number" value="${alloc?alloc.hoursPerDay:2}" min="0.5" step="0.5" oninput="updateResourceInsight()"></div>
+    <button class="btn btn-danger btn-sm" style="margin-bottom:1px" onclick="document.getElementById('${rid}').remove();updateResourceInsight()">×</button>`;
   document.getElementById('alloc-rows').appendChild(div);
+}
+
+// Live resource-allotment insight: shows whether the members you are assigning
+// still have enough free capacity for the hours you are giving them here.
+function updateResourceInsight(){
+  const box = document.getElementById('p-resource-insight');
+  if(!box) return;
+  const freeMap = currentFreeMap();
+  const rows = [...document.querySelectorAll('#alloc-rows > div')];
+  const assigning = {}; // memberId -> hpm assigned in this modal
+  rows.forEach(row=>{
+    const mId = parseInt(row.querySelector('.ar-member').value);
+    const hpd = parseFloat(row.querySelector('.ar-hpd').value);
+    if(mId && hpd>0) assigning[mId] = (assigning[mId]||0) + (+(hpd*22).toFixed(1));
+  });
+  const ids = Object.keys(assigning);
+  if(!ids.length){ box.innerHTML=''; return; }
+  const lines = ids.map(id=>{
+    const m = byId(team, parseInt(id));
+    const free = Math.round(freeMap[id]);              // free before this project
+    const need = Math.round(assigning[id]);
+    const after = free - need;
+    const color = after<0 ? 'var(--red)' : after<HOURS_MONTH*0.15 ? 'var(--amber)' : 'var(--green)';
+    const note = after<0 ? `OVER by ${-after}h` : `${after}h left`;
+    return `<div style="display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:11.5px">
+      <span>${m?m.name:'Unknown'} <span class="xs muted">(${free}h free)</span></span>
+      <span class="mono" style="color:${color}">assigning ${need}h · ${note}</span>
+    </div>`;
+  }).join('');
+  const over = ids.some(id=>Math.round(freeMap[id])-Math.round(assigning[id])<0);
+  box.innerHTML = `<div class="card" style="padding:12px 14px;${over?'border-color:var(--red-border)':''}">
+    <div class="card-title" style="margin-bottom:8px">Resource Availability ${over?'<span class="badge badge-red" style="margin-left:6px">Over capacity</span>':''}</div>
+    ${lines}
+  </div>`;
 }
 
 function saveProject(){
@@ -1355,6 +1492,9 @@ function saveProject(){
   const year   = parseInt(document.getElementById('p-year').value);
   const status = document.getElementById('p-status').value;
   const budgetOverride = parseFloat(document.getElementById('p-budget').value)||null;
+  const shootCost = parseFloat(document.getElementById('p-shoot').value)||0;
+  const oneTime = document.getElementById('p-type').value==='onetime';
+  const fixedCostsDisabled = document.getElementById('p-nofixed').checked;
   const editId = parseInt(document.getElementById('p-edit-id').value)||0;
   if(!name||!cId) return alert('Project name and client are required.');
 
@@ -1367,11 +1507,12 @@ function saveProject(){
     if(mId && hpd>0) allocations.push({memberId:mId,role:role||'Team Member',hoursPerDay:hpd});
   });
 
+  const fields = {name,clientId:cId,month,year,budgetOverride,shootCost,oneTime,fixedCostsDisabled,status,allocations};
   if(editId){
     const idx = projects.findIndex(p=>p.id===editId);
-    if(idx>-1) projects[idx]={...projects[idx],name,clientId:cId,month,year,budgetOverride,status,allocations};
+    if(idx>-1) projects[idx]={...projects[idx],...fields};
   } else {
-    projects.push({id:nextId(projects),name,clientId:cId,month,year,budgetOverride,status,allocations});
+    projects.push({id:nextId(projects),...fields});
   }
   save(); closeModal('modal-project');
   renderProjects(); renderDashboard();
@@ -1383,11 +1524,45 @@ function deleteProject(id){
   projects=projects.filter(p=>p.id!==id); save(); renderProjects(); renderDashboard();
 }
 
+function toggleFixedCosts(id){
+  const p = byId(projects, id);
+  if(!p) return;
+  p.fixedCostsDisabled = !p.fixedCostsDisabled;
+  save(); renderProjects(); renderDashboard();
+}
+
 function renderProjects(){
   document.getElementById('tc-projects').textContent = projects.length;
   const container = document.getElementById('proj-list');
   if(!projects.length){ container.innerHTML='<div class="tbl-empty">No projects yet. Create your first project.</div>'; return; }
-  container.innerHTML = projects.map(proj=>projCard(proj)).join('');
+
+  const q = (document.getElementById('proj-search')?.value||'').toLowerCase().trim();
+  const sortBy = document.getElementById('proj-sort')?.value || 'value';
+  let list = [...projects];
+  if(q) list = list.filter(p=>{ const cl=byId(clients,p.clientId); return p.name.toLowerCase().includes(q) || (cl&&cl.name.toLowerCase().includes(q)); });
+  const calcCache = new Map();
+  const cc = p => { if(!calcCache.has(p.id)) calcCache.set(p.id, projCalc(p)); return calcCache.get(p.id); };
+  list.sort((a,b)=>{
+    if(sortBy==='name') return a.name.localeCompare(b.name);
+    if(sortBy==='margin') return cc(a).marginPct-cc(b).marginPct;
+    if(sortBy==='cost') return cc(b).projectCost-cc(a).projectCost;
+    if(sortBy==='status') return (a.status||'').localeCompare(b.status||'');
+    return cc(b).retainer-cc(a).retainer;
+  });
+
+  const retainerProjs = list.filter(p=>!p.oneTime);
+  const oneTimeProjs  = list.filter(p=>p.oneTime);
+
+  const section = (title, arr, hint) => `
+    <div class="section-hdr" style="margin-top:6px">
+      <div class="section-title">${title} <span class="xs muted" style="font-weight:400">${arr.length} project${arr.length===1?'':'s'}</span></div>
+      <span class="xs muted">${hint}</span>
+    </div>
+    ${arr.length ? arr.map(proj=>projCard(proj)).join('') : '<div class="tbl-empty" style="margin-bottom:16px">None</div>'}`;
+
+  container.innerHTML =
+    section('Retainer Projects', retainerProjs, 'Recurring monthly clients') +
+    section('One Time Projects', oneTimeProjs, 'One off / project-based work');
 }
 
 function projCard(proj){
@@ -1414,10 +1589,12 @@ function projCard(proj){
     <div style="background:var(--accent);padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
       <div>
         <div style="color:#fff;font-size:15px;font-weight:700;letter-spacing:-0.3px">${proj.name}</div>
-        <div style="color:rgba(255,255,255,0.7);font-size:12px;margin-top:3px">${c.client?.name||''} · ${proj.month} ${proj.year}</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:12px;margin-top:3px">${c.client?.name||''} · ${proj.month} ${proj.year} · ${proj.oneTime?'One Time':'Retainer'}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="badge ${statusCls}">${proj.status}</span>
+        ${proj.fixedCostsDisabled?'<span class="badge badge-amber">Fixed costs off</span>':''}
+        <button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff;border:none" onclick="toggleFixedCosts(${proj.id})">${proj.fixedCostsDisabled?'Enable':'Disable'} Fixed Costs</button>
         <button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff;border:none" onclick="openSnap(${proj.id})">View Snapshot</button>
         <button class="btn btn-sm" style="background:rgba(255,255,255,0.12);color:#fff;border:none" onclick="editProject(${proj.id})">Edit</button>
         <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:#fff;border:none;padding:4px 8px" onclick="deleteProject(${proj.id})">×</button>
@@ -1506,7 +1683,7 @@ function openSnap(projId){
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
           <div style="font-size:18px;font-weight:800;letter-spacing:-0.5px">${proj.name}</div>
-          <div style="color:rgba(255,255,255,0.7);font-size:12.5px;margin-top:4px">${c.client?.name||'—'} · ${c.client?.services||''}</div>
+          <div style="color:rgba(255,255,255,0.7);font-size:12.5px;margin-top:4px">${c.client?.name||'None'} · ${c.client?.services||''}</div>
           <div style="color:rgba(255,255,255,0.5);font-size:11.5px;margin-top:2px">${proj.month} ${proj.year} · ${proj.status}</div>
         </div>
         <div style="text-align:right">
@@ -1529,7 +1706,7 @@ function openSnap(projId){
         <div style="margin-bottom:16px">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px">
             <span class="xs muted">Budget consumed</span>
-            <span class="xs mono">${budgetPct}% used — ${inr(c.retainer - c.projectCost)} remaining</span>
+            <span class="xs mono">${budgetPct}% used · ${inr(c.retainer - c.projectCost)} remaining</span>
           </div>
           <div class="prog" style="height:8px"><div class="prog-fill" style="width:${budgetPct}%;background:${budgetPct>90?'var(--red)':budgetPct>65?'var(--amber)':'var(--accent)'}"></div></div>
         </div>
@@ -1648,13 +1825,13 @@ function renderHours(){
     const cost=m?m.rate*l.hours:0;
     return `<tr>
       <td class="mono xs">${l.date}</td>
-      <td><div style="display:flex;align-items:center;gap:7px">${m?av(m,'sm'):''}${m?m.name:'—'}</div></td>
-      <td>${m?deptTag(m.dept):'—'}</td>
-      <td>${p?`<span class="badge badge-blue" style="font-size:10.5px">${p.name}</span>`:'—'}</td>
+      <td><div style="display:flex;align-items:center;gap:7px">${m?av(m,'sm'):''}${m?m.name:'None'}</div></td>
+      <td>${m?deptTag(m.dept):'None'}</td>
+      <td>${p?`<span class="badge badge-blue" style="font-size:10.5px">${p.name}</span>`:'None'}</td>
       <td class="mono fw6">${fh(l.hours)}</td>
-      <td class="mono muted">${m?inr(m.rate):'-'}</td>
+      <td class="mono muted">${m?inr(m.rate):'None'}</td>
       <td class="mono c-green fw6">${inr(cost)}</td>
-      <td class="small muted">${l.notes||'—'}</td>
+      <td class="small muted">${l.notes||'None'}</td>
       <td><button class="btn btn-danger btn-xs" onclick="deleteLog(${l.id})">×</button></td>
     </tr>`;
   }).join('');
@@ -1768,7 +1945,7 @@ function downloadProjectPnLPDF(){
     const c = projCalc(proj);
     return {
       name: proj.name,
-      client: c.client ? c.client.name : '—',
+      client: c.client ? c.client.name : 'None',
       team: c.memberBreakdown.length,
       hours: c.totalHours,
       cost: c.projectCost,
@@ -1786,9 +1963,9 @@ function downloadProjectPnLPDF(){
 
   // ── Header ──
   doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(24,24,27);
-  doc.text('The Impact Engine — ResourcIQ', 40, 42);
+  doc.text('The Impact Engine · RMCA App', 40, 42);
   doc.setFont('helvetica','normal'); doc.setFontSize(10.5); doc.setTextColor(107,107,117);
-  doc.text('Project-wise P&L Report'+(projFilter?` — ${rows[0]?.name||''}`:' — All Projects'), 40, 58);
+  doc.text('Project-wise P&L Report'+(projFilter?` · ${rows[0]?.name||''}`:' · All Projects'), 40, 58);
   const now = new Date();
   doc.text('Generated '+now.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})+' at '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}), pageW-40, 58, {align:'right'});
   doc.setDrawColor(230,228,220); doc.line(40,68,pageW-40,68);
@@ -1838,7 +2015,7 @@ function downloadProjectPnLPDF(){
       const str = 'Page '+doc.internal.getNumberOfPages();
       doc.setFontSize(8); doc.setTextColor(160,160,171);
       doc.text(str, pageW-40, doc.internal.pageSize.getHeight()-20, {align:'right'});
-      doc.text('ResourcIQ — The Impact Engine · Confidential', 40, doc.internal.pageSize.getHeight()-20);
+      doc.text('RMCA App · The Impact Engine · Confidential', 40, doc.internal.pageSize.getHeight()-20);
     },
   });
 
@@ -1915,388 +2092,66 @@ function renderDashboard(){
       <td class="mono fw6" style="color:${mpColor}">${c.marginPct}%</td>
       <td><span class="badge ${scls}">${p.status}</span></td>
     </tr>`;
-  }).join('') || `<tr><td colspan="8" class="tbl-empty">No projects. <a href="#" onclick="goTab('projects',document.querySelector('.nav-tab:nth-child(5)'))">Create one →</a></td></tr>`;
+  }).join('') || `<tr><td colspan="8" class="tbl-empty">No projects. <a href="#" onclick="goTab('projects',document.querySelector('.nav-tab:nth-child(5)'))">Create one</a></td></tr>`;
 }
 
 // ══════════════════════════════════════════════════════════
-// SILOS
+// INSIGHTS — optimisation advice for resource management
 // ══════════════════════════════════════════════════════════
-const SEED_SILOS = [
-  {
-    id:1, name:'Hospitality Silo', color:'blue', desc:'Hotels, Restaurants & Luxury Dining',
-    leadId:1,
-    memberIds:[1,12,18,31,39,7,43],
-    clientIds:[25,8,17,28,29,32,16]
-  },
-  {
-    id:2, name:'F&B & Café Silo', color:'amber', desc:'Cafes, Bakeries, Food Brands',
-    leadId:2,
-    memberIds:[2,13,19,32,40,9],
-    clientIds:[1,2,3,6,7,15,21,22]
-  },
-  {
-    id:3, name:'Lifestyle & Beauty Silo', color:'pink', desc:'Beauty, Wellness, Lifestyle Brands',
-    leadId:5,
-    memberIds:[5,23,20,33,41,10],
-    clientIds:[4,5,20,22,27]
-  },
-  {
-    id:4, name:'Real Estate & Ventures Silo', color:'teal', desc:'Real estate, co-living, developers',
-    leadId:6,
-    memberIds:[6,25,21,34,38,11],
-    clientIds:[11,12,13,23,26]
-  },
-  {
-    id:5, name:'Performance & Growth Silo', color:'purple', desc:'SEO, Ads, Performance Marketing',
-    leadId:3,
-    memberIds:[3,30,8,15,36,37],
-    clientIds:[9,14,30,31,19]
-  },
-];
+function renderInsights(){
+  const alloc = memberAllocatedHours();
+  const revMap = memberRevenueMap();
 
-let silos = JSON.parse(localStorage.getItem('tie_silos') || 'null') || SEED_SILOS;
-function saveSilos(){ localStorage.setItem('tie_silos', JSON.stringify(silos)); }
+  const over   = team.map(m=>({m,h:alloc[m.id]||0})).filter(x=>x.h>HOURS_MONTH).sort((a,b)=>b.h-a.h);
+  const idle   = team.filter(m=>m.salary>0 && (alloc[m.id]||0) < HOURS_MONTH*0.3)
+                     .map(m=>({m,h:alloc[m.id]||0})).sort((a,b)=>a.h-b.h);
+  const calc   = projects.map(p=>({p,c:projCalc(p)}));
+  const losers = calc.filter(x=>x.c.retainer>0 && x.c.margin<0).sort((a,b)=>a.c.margin-b.c.margin);
+  const unbilled = projects.filter(p=>{ const cl=byId(clients,p.clientId); return cl && !cl.retainer && (p.allocations||[]).length; });
+  const lowRoi = team.filter(m=>m.salary>0).map(m=>({m,roi:(revMap[m.id]||0)/m.salary}))
+                     .filter(x=>x.roi<1).sort((a,b)=>a.roi-b.roi);
+  const totalFree = team.reduce((s,m)=>s+Math.max(0,HOURS_MONTH-(alloc[m.id]||0)),0);
+  const capacityFTE = (totalFree/HOURS_MONTH).toFixed(1);
 
-// Silo P&L calc
-function siloCalc(silo){
-  const memberList = silo.memberIds.map(id=>byId(team,id)).filter(Boolean);
-  const clientList = silo.clientIds.map(id=>byId(clients,id)).filter(Boolean);
-  const totalSalary = memberList.reduce((s,m)=>s+m.salary,0);
-  const totalRetainer = clientList.reduce((s,c)=>s+c.retainer,0);
-  // project cost: sum of all project allocations where project's client is in silo AND member is in silo
-  let allocCost = 0;
-  projects.forEach(proj=>{
-    if(!silo.clientIds.includes(proj.clientId)) return;
-    (proj.allocations||[]).forEach(a=>{
-      if(!silo.memberIds.includes(a.memberId)) return;
-      const m=byId(team,a.memberId);
-      if(m) allocCost += m.rate * (+(a.hoursPerDay*22).toFixed(1));
-    });
-  });
-  const margin = totalRetainer - totalSalary;
-  const marginPct = totalRetainer>0 ? Math.round(margin/totalRetainer*100) : 0;
-  const totalHours = memberList.length * HOURS_MONTH;
-  return {memberList, clientList, totalSalary, totalRetainer, allocCost, margin, marginPct, totalHours};
-}
+  document.getElementById('insights-stats').innerHTML = `
+    <div class="stat"><div class="stat-lbl">Over Capacity</div><div class="stat-val ${over.length?'c-red':'c-green'}">${over.length}</div><div class="stat-hint">members above 176h/mo</div></div>
+    <div class="stat"><div class="stat-lbl">Under-utilised (paid)</div><div class="stat-val ${idle.length?'c-amber':'c-green'}">${idle.length}</div><div class="stat-hint">below 30% used</div></div>
+    <div class="stat"><div class="stat-lbl">Loss-making Projects</div><div class="stat-val ${losers.length?'c-red':'c-green'}">${losers.length}</div><div class="stat-hint">negative margin</div></div>
+    <div class="stat"><div class="stat-lbl">Spare Capacity</div><div class="stat-val c-accent">${Math.round(totalFree)}h</div><div class="stat-hint">≈ ${capacityFTE} full-timers free</div></div>`;
 
-function renderSilos(){
-  silos = JSON.parse(localStorage.getItem('tie_silos') || 'null') || SEED_SILOS;
-  document.getElementById('tc-silos').textContent = silos.length;
-
-  // Stats
-  const totalRetainer = silos.reduce((s,sl)=>{ const c=siloCalc(sl); return s+c.totalRetainer; },0);
-  const totalSalary   = silos.reduce((s,sl)=>{ const c=siloCalc(sl); return s+c.totalSalary; },0);
-  const totalMargin   = totalRetainer - totalSalary;
-  const totalMpct     = totalRetainer>0 ? Math.round(totalMargin/totalRetainer*100) : 0;
-  const mpColor       = totalMpct>=40?'var(--green)':totalMpct>=20?'var(--amber)':'var(--red)';
-  const totalMembers  = new Set(silos.flatMap(sl=>sl.memberIds)).size;
-
-  document.getElementById('silo-stats').innerHTML=`
-    <div class="stat"><div class="stat-lbl">Total Silos</div><div class="stat-val c-accent">${silos.length}</div><div class="stat-hint">${totalMembers} members assigned</div></div>
-    <div class="stat"><div class="stat-lbl">Combined Retainer</div><div class="stat-val c-green">${inr(totalRetainer)}</div><div class="stat-hint">Across all silos</div></div>
-    <div class="stat"><div class="stat-lbl">Combined Salary Cost</div><div class="stat-val c-red">${inr(totalSalary)}</div><div class="stat-hint">Monthly payroll in silos</div></div>
-    <div class="stat"><div class="stat-lbl">Gross Margin</div><div class="stat-val" style="color:${mpColor}">${inr(totalMargin)}</div><div class="stat-hint">${totalMpct}% margin</div></div>`;
-
-  const grid = document.getElementById('silo-grid');
-  if(!silos.length){ grid.innerHTML='<div class="tbl-empty">No silos yet. Create your first silo.</div>'; return; }
-  grid.innerHTML = silos.map(silo=>siloCard(silo)).join('');
-}
-
-function siloCard(silo){
-  const c = siloCalc(silo);
-  const lead = byId(team, silo.leadId);
-  const mpColor = c.marginPct>=40?'var(--green)':c.marginPct>=20?'var(--amber)':'var(--red)';
-  const budgetPct = c.totalRetainer>0 ? Math.min(100,Math.round(c.totalSalary/c.totalRetainer*100)) : 0;
-
-  const memberAvatars = c.memberList.slice(0,8).map(m=>`
-    <div style="display:flex;align-items:center;gap:7px;flex:1 1 160px;">
-      ${av(m,'sm')}
-      <div style="min-width:0">
-        <div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.name}</div>
-        <div class="xs muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.pos}</div>
-      </div>
-      <span style="margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--text3);white-space:nowrap;">${inr(m.rate)}/hr</span>
-    </div>`).join('');
-
-  const clientChips = c.clientList.map(cl=>`
-    <div class="silo-client-chip">
-      <span style="width:5px;height:5px;border-radius:50%;background:var(--${silo.color},var(--accent));flex-shrink:0;display:inline-block;"></span>
-      <span>${cl.name}</span>
-      <span class="mono" style="color:var(--text3);font-size:10px;">${cl.retainer?inr(cl.retainer):''}</span>
-    </div>`).join('');
-
-  return `
-  <div class="silo-card sc-${silo.color}">
-    <div class="silo-color-bar"></div>
-    <div class="silo-hdr">
-      <div style="min-width:0">
-        <div class="silo-name">${silo.name}</div>
-        <div class="silo-lead">
-          ${lead ? `${av(lead,'sm')} <span>${lead.name}</span> <span class="badge badge-gray" style="font-size:10px;">Lead</span>` : '<span class="muted">No lead assigned</span>'}
-        </div>
-        ${silo.desc ? `<div class="xs muted" style="margin-top:4px">${silo.desc}</div>` : ''}
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
-        <span class="badge ${c.marginPct>=40?'badge-green':c.marginPct>=20?'badge-amber':'badge-red'}">${c.marginPct}% margin</span>
-        <span class="xs muted">${c.memberList.length} members · ${c.clientList.length} clients</span>
-      </div>
-    </div>
-
-    <!-- KPI strip -->
-    <div class="silo-kpis">
-      <div class="silo-kpi"><div class="silo-kpi-lbl">Retainer</div><div class="silo-kpi-val c-green">${inr(c.totalRetainer)}</div></div>
-      <div class="silo-kpi"><div class="silo-kpi-lbl">Salary Cost</div><div class="silo-kpi-val c-red">${inr(c.totalSalary)}</div></div>
-      <div class="silo-kpi"><div class="silo-kpi-lbl">Gross Margin</div><div class="silo-kpi-val" style="color:${mpColor}">${inr(c.margin)}</div></div>
-      <div class="silo-kpi"><div class="silo-kpi-lbl">Capacity</div><div class="silo-kpi-val">${c.memberList.length * HOURS_MONTH}h</div></div>
-    </div>
-
-    <!-- Budget health bar -->
-    <div style="padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);">
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-        <span class="xs muted">Salary vs Retainer</span>
-        <span class="xs mono">${budgetPct}%</span>
-      </div>
-      <div class="prog" style="height:5px;">
-        <div class="prog-fill" style="width:${budgetPct}%;background:${budgetPct>85?'var(--red)':budgetPct>65?'var(--amber)':'var(--green)'};"></div>
-      </div>
-    </div>
-
-    <!-- Members -->
-    <div class="silo-members">
-      <div class="silo-section-lbl">Team Members</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;">
-        ${memberAvatars}
-        ${c.memberList.length>8?`<div class="xs muted" style="align-self:center;padding:4px;">+${c.memberList.length-8} more</div>`:''}
-      </div>
-    </div>
-
-    <!-- Clients -->
-    <div class="silo-clients">
-      <div class="silo-section-lbl">Assigned Clients</div>
-      <div>${clientChips || '<span class="xs muted">No clients assigned</span>'}</div>
-    </div>
-
-    <!-- Actions -->
-    <div class="silo-actions">
-      <button class="btn btn-ghost btn-sm" onclick="openSiloDetail(${silo.id})">View Detail</button>
-      <button class="btn btn-ghost btn-sm" onclick="editSilo(${silo.id})">Edit</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteSilo(${silo.id})">Delete</button>
-    </div>
-  </div>`;
-}
-
-function openSiloDetail(siloId){
-  const silo = byId(silos, siloId);
-  if(!silo) return;
-  const c = siloCalc(silo);
-  const lead = byId(team, silo.leadId);
-  const mpColor = c.marginPct>=40?'#15803d':c.marginPct>=20?'#b45309':'#b91c1c';
-  const budgetPct = c.totalRetainer>0 ? Math.min(100,Math.round(c.totalSalary/c.totalRetainer*100)):0;
-
-  // Per-dept breakdown within silo
-  const deptMap={};
-  c.memberList.forEach(m=>{
-    if(!deptMap[m.dept]) deptMap[m.dept]={salary:0,count:0,members:[]};
-    deptMap[m.dept].salary+=m.salary; deptMap[m.dept].count++; deptMap[m.dept].members.push(m);
-  });
-  const deptRows = Object.entries(deptMap).sort((a,b)=>b[1].salary-a[1].salary).map(([dept,d])=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);">
-      <div style="display:flex;align-items:center;gap:8px;">${deptTag(dept)}<span class="xs muted">${d.count} member${d.count>1?'s':''}</span></div>
-      <span class="mono xs fw6 c-accent">${inr(d.salary)}/mo</span>
-    </div>`).join('');
-
-  const memberRows = c.memberList.map((m,i)=>`
-    <tr>
-      <td class="xs muted mono">${i+1}</td>
-      <td><div style="display:flex;align-items:center;gap:8px;">${av(m,'sm')}<div><div style="font-size:12.5px;font-weight:600">${m.name}</div><div class="xs muted">${m.pos}</div></div></div></td>
-      <td>${deptTag(m.dept)}</td>
-      <td class="mono">${inr(m.salary)}/mo</td>
-      <td class="mono">${inr(m.rate)}/hr</td>
-      <td class="mono">${HOURS_MONTH}h</td>
-      <td class="mono fw6 c-accent">${inr(m.salary)}</td>
-    </tr>`).join('');
-
-  const clientRows = c.clientList.map((cl,i)=>{
-    const cProjs = projects.filter(p=>p.clientId===cl.id);
-    return `<tr>
-      <td class="xs muted mono">${i+1}</td>
-      <td class="fw6">${cl.name}</td>
-      <td class="small muted">${cl.services}</td>
-      <td class="mono c-green fw6">${cl.retainer?inr(cl.retainer):'—'}</td>
-      <td>${cProjs.map(p=>`<span class="badge badge-blue" style="font-size:10px;">${p.name}</span>`).join(' ')||'<span class="xs muted">No projects</span>'}</td>
-    </tr>`;}).join('');
-
-  const accentColors = {blue:'#1e40af',green:'#15803d',purple:'#6d28d9',amber:'#b45309',teal:'#0f766e',pink:'#be185d',red:'#b91c1c'};
-  const accentHex = accentColors[silo.color]||'#1e40af';
-
-  document.getElementById('silo-detail-content').innerHTML=`
-    <div style="background:${accentHex};color:#fff;border-radius:var(--r2) var(--r2) 0 0;padding:20px 24px;margin:-24px -24px 0;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-        <div>
-          <div style="font-size:18px;font-weight:800;letter-spacing:-0.5px;">${silo.name}</div>
-          ${lead?`<div style="color:rgba(255,255,255,0.75);font-size:12px;margin-top:4px;display:flex;align-items:center;gap:6px;">
-            <div style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;">${initials(lead.name)}</div>
-            Lead: ${lead.name}
-          </div>`:''}
-          ${silo.desc?`<div style="color:rgba(255,255,255,0.6);font-size:11.5px;margin-top:3px;">${silo.desc}</div>`:''}
-        </div>
-        <div style="text-align:right;">
-          <div style="font-size:28px;font-weight:800;font-family:var(--mono);letter-spacing:-1px;">${inr(c.margin)}</div>
-          <div style="color:rgba(255,255,255,0.7);font-size:12px;">Gross Margin · ${c.marginPct}%</div>
-        </div>
-      </div>
-    </div>
-    <div style="margin-top:20px;">
-      <!-- KPIs -->
-      <div class="snap-kpi-row" style="margin-bottom:16px;">
-        <div class="snap-kpi"><div class="snap-kpi-lbl">Total Retainer</div><div class="snap-kpi-val c-green">${inr(c.totalRetainer)}</div><div class="snap-kpi-sub">${c.clientList.length} clients</div></div>
-        <div class="snap-kpi"><div class="snap-kpi-lbl">Monthly Salary</div><div class="snap-kpi-val c-red">${inr(c.totalSalary)}</div><div class="snap-kpi-sub">${c.memberList.length} members</div></div>
-        <div class="snap-kpi"><div class="snap-kpi-lbl">Gross Margin</div><div class="snap-kpi-val" style="color:${mpColor}">${inr(c.margin)}</div><div class="snap-kpi-sub">${c.marginPct}% of retainer</div></div>
-        <div class="snap-kpi"><div class="snap-kpi-lbl">Monthly Capacity</div><div class="snap-kpi-val">${fh(c.totalHours)}</div><div class="snap-kpi-sub">${c.memberList.length} × ${HOURS_MONTH}h</div></div>
-        <div class="snap-kpi"><div class="snap-kpi-lbl">Avg Rate / hr</div><div class="snap-kpi-val">${inr(c.memberList.length>0?c.totalSalary/c.totalHours:0)}</div><div class="snap-kpi-sub">Blended</div></div>
-      </div>
-
-      <!-- Salary vs Retainer bar -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:16px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-          <span class="xs muted fw6">Salary Absorption</span>
-          <span class="xs mono">${budgetPct}% of retainer consumed by salaries</span>
-        </div>
-        <div class="prog" style="height:8px;border-radius:4px;">
-          <div class="prog-fill" style="width:${budgetPct}%;background:${budgetPct>85?'var(--red)':budgetPct>65?'var(--amber)':'var(--green)'};border-radius:4px;"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-top:6px;">
-          <span class="xs muted">Salary: ${inr(c.totalSalary)}</span>
-          <span class="xs muted">Retainer: ${inr(c.totalRetainer)}</span>
-        </div>
-      </div>
-
-      <div class="g2" style="margin-bottom:16px;">
-        <!-- Members table -->
-        <div>
-          <div class="section-hdr"><div class="section-title">Team Members</div><span class="xs muted">${c.memberList.length} assigned</span></div>
-          <div class="tbl-wrap">
-            <table>
-              <thead><tr><th>#</th><th>Name</th><th>Dept</th><th>Salary</th><th>Rate/hr</th><th>Hrs/mo</th><th>Monthly Cost</th></tr></thead>
-              <tbody>${memberRows}</tbody>
-              <tfoot><tr style="background:var(--bg3);">
-                <td colspan="6" class="fw6 xs" style="padding:9px 14px;">Total</td>
-                <td class="mono fw6 c-accent" style="padding:9px 14px;">${inr(c.totalSalary)}</td>
-              </tr></tfoot>
-            </table>
-          </div>
-        </div>
-        <!-- Dept breakdown -->
-        <div>
-          <div class="section-hdr"><div class="section-title">By Department</div></div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;">
-            ${deptRows}
-            <div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:4px;border-top:2px solid var(--border2);">
-              <span class="fw6 xs">Total Monthly Salary</span>
-              <span class="mono fw7 c-accent">${inr(c.totalSalary)}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Clients table -->
-      <div>
-        <div class="section-hdr"><div class="section-title">Assigned Clients</div><span class="xs muted">${c.clientList.length} clients</span></div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>#</th><th>Client</th><th>Services</th><th>Monthly Retainer</th><th>Projects</th></tr></thead>
-            <tbody>${clientRows}</tbody>
-            <tfoot><tr style="background:var(--bg3);">
-              <td colspan="3" class="fw6 xs" style="padding:9px 14px;">Total Retainer</td>
-              <td class="mono fw6 c-green" style="padding:9px 14px;">${inr(c.totalRetainer)}</td>
-              <td></td>
-            </tr></tfoot>
-          </table>
-        </div>
-      </div>
-
-      <!-- P&L Summary -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-top:16px;">
-        <div class="section-title" style="margin-bottom:12px;">P&L Summary</div>
-        <div class="cost-line"><span class="muted">Total Client Retainer (Revenue)</span><span class="mono fw6 c-green">${inr(c.totalRetainer)}</span></div>
-        <div class="cost-line"><span class="muted">Team Monthly Salary (Cost)</span><span class="mono" style="color:var(--red);">− ${inr(c.totalSalary)}</span></div>
-        <div class="cost-line total">
-          <span>Gross Margin</span>
-          <div style="text-align:right;"><div class="mono fw7" style="color:${mpColor};">${inr(c.margin)}</div><div class="xs" style="color:${mpColor};">${c.marginPct}% margin</div></div>
-        </div>
-        <div style="margin-top:12px;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span class="xs muted">Margin Health</span><span class="xs fw6" style="color:${mpColor};">${c.marginPct>=40?'Healthy ✓':c.marginPct>=20?'Acceptable ⚡':'Needs Attention ⚠'}</span></div>
-          <div class="prog" style="height:10px;border-radius:5px;"><div class="prog-fill" style="width:${Math.max(0,c.marginPct)}%;background:${mpColor};border-radius:5px;"></div></div>
-          <div style="display:flex;justify-content:space-between;margin-top:3px;"><span class="xs muted">0%</span><span class="xs muted">Target ≥ 40%</span><span class="xs muted">100%</span></div>
-        </div>
-      </div>
+  const card = (title, hint, rows, empty) => `
+    <div class="card" style="margin-bottom:14px">
+      <div class="section-hdr" style="margin-bottom:10px"><div class="section-title">${title}</div><span class="xs muted">${hint}</span></div>
+      ${rows.length ? rows.join('') : `<div class="xs muted" style="padding:6px 0">${empty}</div>`}
     </div>`;
-  openModal('modal-silo-detail');
-}
+  const line = (left, right, color) => `
+    <div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px">
+      <span>${left}</span><span class="mono fw6" style="color:${color||'var(--text)'}">${right}</span>
+    </div>`;
 
-function openSiloModal(siloId=null){
-  // Populate lead dropdown
-  document.getElementById('s-lead').innerHTML = '<option value="">— Select Lead —</option>' +
-    team.filter(m=>m.dept==='Account Management Team').map(m=>`<option value="${m.id}">${m.name}</option>`).join('') +
-    '<optgroup label="Other"></optgroup>' +
-    team.filter(m=>m.dept!=='Account Management Team').map(m=>`<option value="${m.id}">${m.name} (${DEPT_META[m.dept]?.short||''})</option>`).join('');
+  const body = [];
 
-  // Member checkboxes
-  document.getElementById('s-members-grid').innerHTML = team.map(m=>`
-    <label style="display:flex;align-items:center;gap:7px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12.5px;background:var(--bg2);">
-      <input type="checkbox" class="sm-cb" value="${m.id}" style="width:13px;height:13px;accent-color:var(--accent);">
-      ${av(m,'sm')} <div><div style="font-size:12px;font-weight:500;">${m.name}</div><div class="xs muted">${DEPT_META[m.dept]?.short||''}</div></div>
-    </label>`).join('');
+  body.push(card('Over-allocated members', 'Assigned beyond 176h/month, redistribute their load',
+    over.map(x=>line(`${x.m.name} <span class="xs muted">${x.m.pos}</span>`, `${Math.round(x.h)}h / 176h`, 'var(--red)')),
+    'No one is over capacity.'));
 
-  // Client checkboxes
-  document.getElementById('s-clients-grid').innerHTML = clients.filter(c=>c.retainer>0).map(c=>`
-    <label style="display:flex;align-items:center;gap:7px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12px;background:var(--bg2);">
-      <input type="checkbox" class="sc-cb" value="${c.id}" style="width:13px;height:13px;accent-color:var(--accent);">
-      <div><div style="font-size:12px;font-weight:500;">${c.name}</div><div class="xs muted">${inr(c.retainer)}/mo</div></div>
-    </label>`).join('');
+  body.push(card('Under-utilised paid members', 'Spare capacity you are already paying for, redeploy to new work',
+    idle.map(x=>line(`${x.m.name} <span class="xs muted">${x.m.pos}</span>`, `${Math.round(x.h)}h used · ${Math.round(HOURS_MONTH-x.h)}h free`, 'var(--amber)')),
+    'Everyone paid is reasonably utilised.'));
 
-  if(siloId){
-    const s = byId(silos, siloId);
-    document.getElementById('silo-modal-title').textContent = 'Edit Silo';
-    document.getElementById('silo-edit-id').value = siloId;
-    document.getElementById('s-name').value = s.name;
-    document.getElementById('s-lead').value = s.leadId||'';
-    document.getElementById('s-color').value = s.color||'blue';
-    document.getElementById('s-desc').value = s.desc||'';
-    document.querySelectorAll('.sm-cb').forEach(cb=>{ cb.checked = s.memberIds.includes(parseInt(cb.value)); });
-    document.querySelectorAll('.sc-cb').forEach(cb=>{ cb.checked = s.clientIds.includes(parseInt(cb.value)); });
-  } else {
-    document.getElementById('silo-modal-title').textContent = 'Create Silo';
-    document.getElementById('silo-edit-id').value = '';
-    ['s-name','s-desc'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('s-lead').value='';
-    document.getElementById('s-color').value='blue';
-  }
-  document.getElementById('modal-silo').classList.add('open');
-}
+  body.push(card('Loss-making projects', 'Cost exceeds retainer, review scope, price or staffing',
+    losers.map(x=>line(`${x.p.name} <span class="xs muted">${x.c.client?.name||''}</span>`, `${inr(x.c.margin)} (${x.c.marginPct}%)`, 'var(--red)')),
+    'No project is running at a loss.'));
 
-function saveSilo(){
-  const name    = document.getElementById('s-name').value.trim();
-  const leadId  = parseInt(document.getElementById('s-lead').value)||null;
-  const color   = document.getElementById('s-color').value;
-  const desc    = document.getElementById('s-desc').value.trim();
-  if(!name) return alert('Silo name required.');
-  const memberIds = [...document.querySelectorAll('.sm-cb:checked')].map(cb=>parseInt(cb.value));
-  const clientIds = [...document.querySelectorAll('.sc-cb:checked')].map(cb=>parseInt(cb.value));
-  const editId = parseInt(document.getElementById('silo-edit-id').value)||0;
-  if(editId){
-    const idx = silos.findIndex(s=>s.id===editId);
-    if(idx>-1) silos[idx]={...silos[idx],name,leadId,color,desc,memberIds,clientIds};
-  } else {
-    silos.push({id:nextId(silos),name,leadId,color,desc,memberIds,clientIds});
-  }
-  saveSilos(); closeModal('modal-silo'); renderSilos();
-}
+  body.push(card('Unbilled active work', 'Clients with active staffing but zero retainer on file, add pricing',
+    unbilled.map(p=>{ const cl=byId(clients,p.clientId); return line(`${p.name} <span class="xs muted">${cl?cl.name:''}</span>`, `${(p.allocations||[]).length} allocated`, 'var(--amber)'); }),
+    'All staffed clients have a retainer.'));
 
-function editSilo(id){ openSiloModal(id); }
-function deleteSilo(id){
-  if(!confirm('Delete this silo?')) return;
-  silos=silos.filter(s=>s.id!==id); saveSilos(); renderSilos();
+  body.push(card('Low-ROI members', 'Attributed client revenue below their salary, review fit or billability',
+    lowRoi.slice(0,12).map(x=>line(`${x.m.name} <span class="xs muted">${x.m.pos}</span>`, `${x.roi.toFixed(2)}x`, 'var(--red)')),
+    'Every paid member returns at least their cost.'));
+
+  document.getElementById('insights-body').innerHTML = body.join('');
 }
 
 // Load from Neon DB on startup (overrides localStorage if DB has data)
@@ -2310,14 +2165,12 @@ fetch('/api/data').then(r=>r.json()).then(data=>{
   document.getElementById('tc-team').textContent = team.length;
   document.getElementById('tc-clients').textContent = clients.length;
   document.getElementById('tc-projects').textContent = projects.length;
-  document.getElementById('tc-silos').textContent = silos.length;
 }).catch(()=>{
   populateClientModal();
   renderDashboard();
   document.getElementById('tc-team').textContent = team.length;
   document.getElementById('tc-clients').textContent = clients.length;
   document.getElementById('tc-projects').textContent = projects.length;
-  document.getElementById('tc-silos').textContent = silos.length;
 });
 
 // Unified goTab — overrides the earlier definition
@@ -2326,7 +2179,7 @@ function goTab(tab, el){
   if(el) el.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+tab).classList.add('active');
-  const renders = {dashboard:renderDashboard,team:renderTeam,workload:renderWorkload,clients:renderClients,projects:renderProjects,silos:renderSilos,hours:renderHours,costs:renderCosts};
+  const renders = {dashboard:renderDashboard,team:renderTeam,workload:renderWorkload,clients:renderClients,projects:renderProjects,insights:renderInsights,hours:renderHours,costs:renderCosts};
   if(renders[tab]) renders[tab]();
 }
 </script>
