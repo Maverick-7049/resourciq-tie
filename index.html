@@ -4,25 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RMCA App · Smart Resource Management and Cost Analysis Hub</title>
-<link rel="icon" type="image/jpeg" href="/logo.jpg">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0C10'/%3E%3Cpath d='M17 44h30' stroke='%23E11D2A' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M22 51h20' stroke='%23E11D2A' stroke-width='4' stroke-linecap='round' opacity='0.6'/%3E%3Ccircle cx='32' cy='26' r='14' fill='none' stroke='%23E11D2A' stroke-width='4'/%3E%3Ccircle cx='32' cy='26' r='6' fill='%23E11D2A'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="/logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
 :root {
-  --bg:#f7f6f2; --bg2:#ffffff; --bg3:#f2f1ec; --surface:#fafaf7;
-  --border:#e6e4dc; --border2:#d0cec5;
-  --text:#18181b; --text2:#6b6b75; --text3:#a0a0ab;
-  --accent:#1e40af; --accent-bg:#eff6ff; --accent-border:#bfdbfe;
-  --green:#15803d; --green-bg:#f0fdf4; --green-border:#bbf7d0;
-  --amber:#b45309; --amber-bg:#fffbeb; --amber-border:#fde68a;
-  --red:#b91c1c; --red-bg:#fef2f2; --red-border:#fecaca;
-  --purple:#6d28d9; --purple-bg:#f5f3ff; --purple-border:#ddd6fe;
-  --teal:#0f766e; --teal-bg:#f0fdfa; --teal-border:#99f6e4;
-  --pink:#be185d; --pink-bg:#fdf2f8; --pink-border:#fbcfe8;
+  /* Dark premium canvas */
+  --bg:#0a0c10; --bg2:#111419; --bg3:#181c22; --surface:#14181e;
+  --border:#232a33; --border2:#2f3944;
+  --text:#eef1f5; --text2:#9ba4b0; --text3:#69727e;
+  /* Brand red (from logo) as primary accent */
+  --brand:#e11d2a; --brand-dark:#b3151f;
+  --accent:#f0303d; --accent-bg:rgba(225,29,42,0.14); --accent-border:rgba(225,29,42,0.38);
+  /* Financial semantics, tuned for dark */
+  --green:#34d399; --green-bg:rgba(52,211,153,0.12); --green-border:rgba(52,211,153,0.30);
+  --amber:#fbbf24; --amber-bg:rgba(251,191,36,0.12); --amber-border:rgba(251,191,36,0.30);
+  --red:#fb5468; --red-bg:rgba(251,84,104,0.12); --red-border:rgba(251,84,104,0.32);
+  --purple:#a78bfa; --purple-bg:rgba(167,139,250,0.12); --purple-border:rgba(167,139,250,0.30);
+  --teal:#2dd4bf; --teal-bg:rgba(45,212,191,0.12); --teal-border:rgba(45,212,191,0.30);
+  --pink:#f472b6; --pink-bg:rgba(244,114,182,0.12); --pink-border:rgba(244,114,182,0.30);
   --sans:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
-  --r:7px; --r2:11px;
+  --r:9px; --r2:14px;
+  --glow:0 0 0 1px rgba(225,29,42,0.0);
+  --shadow:0 1px 2px rgba(0,0,0,0.4),0 8px 30px rgba(0,0,0,0.35);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;}
@@ -32,12 +38,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:13
 #login-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#0b1220;}
 #login-overlay.hidden{display:none;}
 /* animated gradient backdrop */
-.login-bg{position:absolute;inset:0;background:linear-gradient(120deg,#0b1220,#12203b,#3a0d10,#1e2a4a,#0b1220);background-size:300% 300%;animation:loginShift 18s ease infinite;}
+.login-bg{position:absolute;inset:0;background:linear-gradient(125deg,#07080b,#140a0d,#2a0c11,#0d0e12,#07080b);background-size:300% 300%;animation:loginShift 20s ease infinite;}
 @keyframes loginShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-.login-orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:0.55;animation:loginFloat 14s ease-in-out infinite;}
-.login-orb.o1{width:420px;height:420px;background:#1e40af;top:-120px;left:-80px;}
-.login-orb.o2{width:360px;height:360px;background:#b91c1c;bottom:-120px;right:-60px;animation-delay:-5s;}
-.login-orb.o3{width:280px;height:280px;background:#6d28d9;top:40%;left:55%;animation-delay:-9s;}
+.login-orb{position:absolute;border-radius:50%;filter:blur(75px);opacity:0.5;animation:loginFloat 14s ease-in-out infinite;}
+.login-orb.o1{width:440px;height:440px;background:#e11d2a;top:-140px;left:-90px;opacity:0.42;}
+.login-orb.o2{width:380px;height:380px;background:#7a0f16;bottom:-130px;right:-70px;animation-delay:-5s;}
+.login-orb.o3{width:300px;height:300px;background:#3a3f4a;top:42%;left:56%;animation-delay:-9s;}
 @keyframes loginFloat{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,-30px) scale(1.08);}66%{transform:translate(-30px,25px) scale(0.94);}}
 .login-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(circle at 50% 45%,#000 0%,transparent 75%);}
 .login-box{position:relative;z-index:2;background:rgba(255,255,255,0.98);border:1px solid rgba(255,255,255,0.6);border-radius:20px;padding:40px 44px;width:400px;box-shadow:0 30px 90px rgba(0,0,0,0.55);animation:loginRise 0.6s cubic-bezier(0.16,1,0.3,1);}
@@ -239,9 +245,117 @@ select option{background:var(--bg2);}
   .form-grid.g2,.form-grid.g3,.form-grid.g4{grid-template-columns:1fr 1fr;}
   .snap-kpi-row{grid-template-columns:repeat(3,1fr);}
   .page{padding:16px;}
-  .silo-grid{grid-template-columns:1fr;}
-  .silo-kpis{grid-template-columns:repeat(2,1fr);}
 }
+
+/* ════════════════ DARK PREMIUM THEME ════════════════ */
+body{
+  background:
+    radial-gradient(900px 500px at 82% -8%, rgba(225,29,42,0.10), transparent 60%),
+    radial-gradient(1100px 600px at -5% 0%, rgba(120,130,160,0.06), transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(225,29,42,0.32);color:#fff;}
+::-webkit-scrollbar-thumb{background:#2b333d;} ::-webkit-scrollbar-thumb:hover{background:#3a434f;}
+
+/* NAV as glass command bar */
+.nav{
+  background:rgba(14,17,22,0.82);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  height:56px;padding:0 22px;
+  box-shadow:0 1px 0 rgba(255,255,255,0.03), 0 12px 30px -18px rgba(0,0,0,0.8);
+}
+.brand{font-weight:800;letter-spacing:-0.4px;margin-right:28px;}
+.brand-mark{
+  background:linear-gradient(145deg,var(--brand),var(--brand-dark));
+  color:#fff;width:28px;height:28px;border-radius:8px;font-weight:900;
+  box-shadow:0 4px 14px rgba(225,29,42,0.45), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.brand-sub{color:var(--text3);}
+.nav-tab{height:56px;color:var(--text2);font-weight:500;position:relative;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:#fff;border-bottom-color:transparent;}
+.nav-tab.active::after{content:'';position:absolute;left:10px;right:10px;bottom:0;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--brand),#ff5a63);box-shadow:0 0 12px rgba(225,29,42,0.7);}
+.nav-tab .tab-count{background:rgba(255,255,255,0.06);color:var(--text2);border:1px solid var(--border);}
+.nav-tab.active .tab-count{background:var(--accent-bg);color:#ff707a;border-color:var(--accent-border);}
+
+/* Headings */
+.page-title{font-weight:800;letter-spacing:-0.6px;font-size:19px;background:linear-gradient(180deg,#fff,#c7ccd4);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.page-sub{color:var(--text3);}
+.section-title{color:var(--text);font-weight:700;letter-spacing:-0.2px;}
+.card-title{color:var(--text3);letter-spacing:0.8px;}
+
+/* Cards & panels: subtle glass with hairline + depth */
+.card,.tbl-wrap,.stat,.snap-body{
+  background:linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0)) , var(--bg2);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+.card{border-radius:var(--r2);transition:border-color .18s,transform .18s,box-shadow .18s;}
+.card:hover{border-color:#333d49;}
+.stat{position:relative;overflow:hidden;border-radius:var(--r2);transition:transform .18s,border-color .18s;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--brand),transparent 70%);opacity:.55;}
+.stat:hover{transform:translateY(-2px);border-color:#333d49;}
+.stat-lbl{color:var(--text3);}
+.stat-val{letter-spacing:-0.6px;}
+
+/* Tables */
+th{background:rgba(255,255,255,0.02);color:var(--text3);border-bottom:1px solid var(--border);}
+td{border-bottom:1px solid var(--border);}
+tr:hover td{background:rgba(255,255,255,0.028);}
+.tbl-empty{color:var(--text3);}
+
+/* Inputs */
+.form-field input,.form-field select,.form-field textarea,.filter-row select,.filter-row input{
+  background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:var(--r);
+}
+.form-field input:focus,.form-field select:focus,.filter-row select:focus,.filter-row input:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-bg);
+}
+.form-field input::placeholder,.filter-row input::placeholder{color:var(--text3);}
+select option{background:#14181e;color:var(--text);}
+
+/* Buttons */
+.btn{border-radius:var(--r);font-weight:600;letter-spacing:0.1px;}
+.btn-primary{background:linear-gradient(145deg,var(--brand),var(--brand-dark));color:#fff;box-shadow:0 6px 18px -4px rgba(225,29,42,0.5),inset 0 1px 0 rgba(255,255,255,0.18);}
+.btn-primary:hover{background:linear-gradient(145deg,#f5313e,#c4171f);transform:translateY(-1px);}
+.btn-ghost{background:rgba(255,255,255,0.03);color:var(--text2);border:1px solid var(--border2);}
+.btn-ghost:hover{background:rgba(255,255,255,0.07);color:var(--text);border-color:#3a434f;}
+.btn-danger{background:var(--red-bg);color:#ff8a97;border:1px solid var(--red-border);}
+.btn-danger:hover{background:rgba(251,84,104,0.2);}
+
+/* Badges keep translucent look via vars; give them weight */
+.badge{font-weight:600;backdrop-filter:blur(2px);}
+
+/* Dept chips: brighten for dark */
+.dept-acc{--dc:#7aa2ff;} .dept-ads{--dc:#b79bff;} .dept-cnt{--dc:#4ee0c9;} .dept-cre{--dc:#ff86bf;}
+.dept-hr{--dc:#aab3c0;} .dept-seo{--dc:#ffc861;} .dept-soc{--dc:#57e08f;} .dept-tec{--dc:#7aa2ff;} .dept-vid{--dc:#ff6d6d;}
+.dept-tag{background:color-mix(in srgb,var(--dc) 16%,transparent);color:var(--dc);border:1px solid color-mix(in srgb,var(--dc) 34%,transparent);}
+
+/* Progress */
+.prog{background:rgba(255,255,255,0.06);}
+
+/* Filter pills */
+.filter-pill{background:rgba(255,255,255,0.03);border:1px solid var(--border2);color:var(--text2);}
+.filter-pill:hover{color:var(--text);border-color:#3a434f;}
+.filter-pill.active{background:var(--accent-bg);border-color:var(--accent-border);color:#ff707a;}
+
+/* Snapshot header as brand gradient */
+.snap-header{background:linear-gradient(135deg,#1a1e25 0%,#20141a 60%,var(--brand-dark) 140%);border:1px solid var(--border);}
+
+/* Modal */
+.modal{background:#12161c;border:1px solid var(--border2);box-shadow:0 30px 80px rgba(0,0,0,0.6);}
+.overlay{background:rgba(4,6,9,0.6);backdrop-filter:blur(3px);}
+.modal-title{color:#fff;letter-spacing:-0.3px;}
+
+/* Page fade-in */
+.page.active{animation:pageIn .28s ease;}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+/* Login button hover to brand */
+.login-btn:hover{background:var(--brand-dark);}
 </style>
 </head>
 <body>
@@ -896,6 +1010,8 @@ function save(){
 // ══ HELPERS ══
 function byId(arr,id){ return arr.find(x=>x.id==id); }
 function nextId(arr){ return arr.length ? Math.max(...arr.map(x=>x.id))+1 : 1; }
+// Preview-deleted (archived) projects are excluded from every rollup, but kept and restorable.
+function activeProjects(){ return projects.filter(p=>!p.archived); }
 const inr = n => '₹' + Math.round(n).toLocaleString('en-IN');
 const pct = (a,b) => b ? Math.round(a/b*100) : 0;
 const fh  = h => (h%1===0 ? h : h.toFixed(1))+'h';
@@ -976,8 +1092,8 @@ function retainerOf(proj){
 // disabled are excluded entirely (they carry no shared overhead, and the pool is
 // distributed across the remaining eligible projects).
 function poolShare(proj, poolMonthly, scopeFn){
-  if(proj.fixedCostsDisabled || !scopeFn(proj) || !poolMonthly) return 0;
-  const eligible = projects.filter(p=>!p.fixedCostsDisabled && scopeFn(p));
+  if(proj.fixedCostsDisabled || proj.archived || !scopeFn(proj) || !poolMonthly) return 0;
+  const eligible = projects.filter(p=>!p.fixedCostsDisabled && !p.archived && scopeFn(p));
   const n = eligible.length;
   if(!n) return 0;
   const base = (poolMonthly * FIXED_COST_BASE_RATIO) / n;
@@ -1073,6 +1189,7 @@ function memberRevenueMap(){
   const revMap = {};
   team.forEach(m=>revMap[m.id]=0);
   projects.forEach(p=>{
+    if(p.archived) return;
     const client = byId(clients, p.clientId);
     const retainer = p.budgetOverride || (client ? client.retainer : 0);
     const allocs = p.allocations||[];
@@ -1094,9 +1211,9 @@ function renderTeam(){
     `<span class="filter-pill ${!teamDeptFilter?'active':''}" onclick="setTeamDept('')">All</span>` +
     depts.map(d=>`<span class="filter-pill ${teamDeptFilter===d?'active':''}" onclick="setTeamDept('${d}')">${DEPT_META[d]?.short||d}</span>`).join('');
 
-  // Allocated hours per member across all projects
+  // Allocated hours per member across all active projects
   const allocMap = {};
-  projects.forEach(p=>{
+  activeProjects().forEach(p=>{
     (p.allocations||[]).forEach(a=>{
       if(!allocMap[a.memberId]) allocMap[a.memberId]={hours:0,projs:[]};
       const hpm = +(a.hoursPerDay * 22).toFixed(1);
@@ -1169,10 +1286,10 @@ function renderWorkload(){
     `<span class="filter-pill ${!workloadDeptFilter?'active':''}" onclick="setWorkloadDept('')">All</span>` +
     brackets.map(b=>`<span class="filter-pill ${workloadDeptFilter===b?'active':''}" onclick="setWorkloadDept('${b.replace(/'/g,"\\'")}')">${b}</span>`).join('');
 
-  // memberId -> list of projects
+  // memberId -> list of active projects
   const projMap = {};
   team.forEach(m=>projMap[m.id]=[]);
-  projects.forEach(p=>{
+  activeProjects().forEach(p=>{
     (p.allocations||[]).forEach(a=>{
       if(projMap[a.memberId]) projMap[a.memberId].push(p);
     });
@@ -1261,9 +1378,9 @@ function renderClients(){
   document.getElementById('tc-clients').textContent = clients.length;
   const tbody = document.getElementById('clients-body');
 
-  // "Project size" = total team members allocated across a client's projects
-  const sizeOf = c => projects.filter(p=>p.clientId==c.id).reduce((s,p)=>s+(p.allocations||[]).length,0);
-  const costOf = c => projects.filter(p=>p.clientId==c.id).reduce((s,p)=>s+projCalc(p).projectCost,0);
+  // "Project size" = total team members allocated across a client's active projects
+  const sizeOf = c => projects.filter(p=>p.clientId==c.id&&!p.archived).reduce((s,p)=>s+(p.allocations||[]).length,0);
+  const costOf = c => projects.filter(p=>p.clientId==c.id&&!p.archived).reduce((s,p)=>s+projCalc(p).projectCost,0);
 
   const q = (document.getElementById('client-search')?.value||'').toLowerCase().trim();
   const sortBy = document.getElementById('client-sort')?.value || 'size';
@@ -1278,7 +1395,7 @@ function renderClients(){
   });
 
   tbody.innerHTML = list.map((c,i)=>{
-    const cProjs = projects.filter(p=>p.clientId==c.id);
+    const cProjs = projects.filter(p=>p.clientId==c.id&&!p.archived);
     let totalCost = 0;
     cProjs.forEach(p=>{ totalCost += projCalc(p).projectCost; });
     const margin = c.retainer - totalCost;
@@ -1374,6 +1491,7 @@ function memberAllocatedHours(excludeProjId){
   const map = {};
   team.forEach(m=>map[m.id]=0);
   projects.forEach(p=>{
+    if(p.archived) return;
     if(excludeProjId && p.id===excludeProjId) return;
     (p.allocations||[]).forEach(a=>{ if(map[a.memberId]!=null) map[a.memberId]+=(+(a.hoursPerDay*22).toFixed(1)); });
   });
@@ -1531,6 +1649,21 @@ function toggleFixedCosts(id){
   save(); renderProjects(); renderDashboard();
 }
 
+// Preview delete: archive (soft) so it is excluded from every rollup but kept and restorable.
+function archiveProject(id){
+  const p = byId(projects, id);
+  if(!p) return;
+  p.archived = true;
+  save(); renderProjects(); renderDashboard();
+  document.getElementById('tc-projects').textContent = projects.length;
+}
+function restoreProject(id){
+  const p = byId(projects, id);
+  if(!p) return;
+  p.archived = false;
+  save(); renderProjects(); renderDashboard();
+}
+
 function renderProjects(){
   document.getElementById('tc-projects').textContent = projects.length;
   const container = document.getElementById('proj-list');
@@ -1550,8 +1683,9 @@ function renderProjects(){
     return cc(b).retainer-cc(a).retainer;
   });
 
-  const retainerProjs = list.filter(p=>!p.oneTime);
-  const oneTimeProjs  = list.filter(p=>p.oneTime);
+  const retainerProjs = list.filter(p=>!p.oneTime && !p.archived);
+  const oneTimeProjs  = list.filter(p=>p.oneTime && !p.archived);
+  const archivedProjs = list.filter(p=>p.archived);
 
   const section = (title, arr, hint) => `
     <div class="section-hdr" style="margin-top:6px">
@@ -1562,7 +1696,64 @@ function renderProjects(){
 
   container.innerHTML =
     section('Retainer Projects', retainerProjs, 'Recurring monthly clients') +
-    section('One Time Projects', oneTimeProjs, 'One off / project-based work');
+    section('One Time Projects', oneTimeProjs, 'One off / project-based work') +
+    (archivedProjs.length ? archivedSection(archivedProjs) : '');
+}
+
+// Aggregate view of preview-deleted (archived) projects: what capacity and cost they free up.
+function archivedSection(arr){
+  const freed = {};          // memberId -> freed hours/month
+  let freedCost = 0, freedHours = 0;
+  arr.forEach(p=>{
+    freedCost += projCalc(p).teamCost;
+    (p.allocations||[]).forEach(a=>{
+      const hpm = +(a.hoursPerDay*22).toFixed(1);
+      freed[a.memberId] = (freed[a.memberId]||0)+hpm;
+      freedHours += hpm;
+    });
+  });
+  const liveAlloc = memberAllocatedHours(); // hours members still carry on active projects
+  const freedList = Object.entries(freed).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([mid,h])=>{
+    const m = byId(team, parseInt(mid)); if(!m) return '';
+    const nowUsed = liveAlloc[mid]||0;
+    const nowFree = Math.max(0, HOURS_MONTH - nowUsed);
+    return `<div style="display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px">
+      <span>${av(m,'sm')} ${m.name}</span>
+      <span class="mono">frees ${Math.round(h)}h · now ${Math.round(nowFree)}h free</span>
+    </div>`;
+  }).join('');
+
+  const cards = arr.map(p=>{
+    const c = projCalc(p);
+    return `<div style="margin-bottom:12px;border:1px dashed var(--border2);border-radius:var(--r2);padding:14px 18px;background:var(--bg2);opacity:0.92">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <div class="fw7" style="font-size:13.5px">${p.name} <span class="badge badge-amber" style="margin-left:6px">Preview deleted</span></div>
+          <div class="xs muted" style="margin-top:2px">${c.client?.name||''} · frees ${fh(c.totalHours)}/mo across ${c.memberBreakdown.length} member${c.memberBreakdown.length===1?'':'s'} · ${inr(c.teamCost)} team cost</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="restoreProject(${p.id})">Restore</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteProject(${p.id})">Delete permanently</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="section-hdr" style="margin-top:22px">
+      <div class="section-title">Preview Deleted <span class="xs muted" style="font-weight:400">${arr.length} project${arr.length===1?'':'s'}</span></div>
+      <span class="xs muted">Excluded from all costs and capacity · restorable</span>
+    </div>
+    <div class="card" style="margin-bottom:14px;border-style:dashed">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:12px">
+        <div><div class="xs muted">Capacity freed</div><div class="stat-val c-green" style="font-size:18px">${Math.round(freedHours)}h/mo</div><div class="xs muted">≈ ${(freedHours/HOURS_MONTH).toFixed(1)} full-timers</div></div>
+        <div><div class="xs muted">Team cost freed</div><div class="stat-val c-green" style="font-size:18px">${inr(freedCost)}</div></div>
+        <div><div class="xs muted">Projects on hold</div><div class="stat-val" style="font-size:18px">${arr.length}</div></div>
+      </div>
+      <div class="card-title" style="margin-bottom:6px">Resource time freed</div>
+      ${freedList||'<div class="xs muted">No allocations on these projects.</div>'}
+    </div>
+    ${cards}`;
 }
 
 function projCard(proj){
@@ -1584,9 +1775,9 @@ function projCard(proj){
     </tr>`).join('');
 
   return `
-  <div style="margin-bottom:16px;border-radius:var(--r2);overflow:hidden;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+  <div style="margin-bottom:16px;border-radius:var(--r2);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow)">
     <!-- Header -->
-    <div style="background:var(--accent);padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+    <div style="background:linear-gradient(135deg,#191d24 0%,#241722 55%,var(--brand-dark) 150%);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
       <div>
         <div style="color:#fff;font-size:15px;font-weight:700;letter-spacing:-0.3px">${proj.name}</div>
         <div style="color:rgba(255,255,255,0.7);font-size:12px;margin-top:3px">${c.client?.name||''} · ${proj.month} ${proj.year} · ${proj.oneTime?'One Time':'Retainer'}</div>
@@ -1597,6 +1788,7 @@ function projCard(proj){
         <button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff;border:none" onclick="toggleFixedCosts(${proj.id})">${proj.fixedCostsDisabled?'Enable':'Disable'} Fixed Costs</button>
         <button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff;border:none" onclick="openSnap(${proj.id})">View Snapshot</button>
         <button class="btn btn-sm" style="background:rgba(255,255,255,0.12);color:#fff;border:none" onclick="editProject(${proj.id})">Edit</button>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,0.12);color:#fff;border:none" onclick="archiveProject(${proj.id})" title="Preview delete: exclude from costs and capacity without losing it">Preview Delete</button>
         <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:#fff;border:none;padding:4px 8px" onclick="deleteProject(${proj.id})">×</button>
       </div>
     </div>
@@ -1779,7 +1971,7 @@ function openSnap(projId){
 // ══════════════════════════════════════════════════════════
 function populateLogModal(){
   document.getElementById('lg-member').innerHTML = team.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
-  document.getElementById('lg-project').innerHTML = projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('lg-project').innerHTML = activeProjects().map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
   document.getElementById('lg-date').value = new Date().toISOString().slice(0,10);
 }
 
@@ -1847,7 +2039,7 @@ function renderCosts(){
   pf.value=pfv;
 
   const projFilter=parseInt(pfv)||0;
-  const filteredProjs=projFilter?projects.filter(p=>p.id===projFilter):projects;
+  const filteredProjs=projFilter?projects.filter(p=>p.id===projFilter):activeProjects();
 
   let totalRetainer=0,totalCost=0;
   const memberMap={},deptMap={},projMap={};
@@ -1939,7 +2131,7 @@ function downloadProjectPnLPDF(){
 
   const pfv = document.getElementById('cost-proj-filter').value;
   const projFilter = parseInt(pfv)||0;
-  const filteredProjs = projFilter ? projects.filter(p=>p.id===projFilter) : projects;
+  const filteredProjs = projFilter ? projects.filter(p=>p.id===projFilter) : activeProjects();
 
   const rows = filteredProjs.map(proj=>{
     const c = projCalc(proj);
@@ -2028,8 +2220,8 @@ function downloadProjectPnLPDF(){
 function renderDashboard(){
   const totalSalary = team.reduce((s,m)=>s+m.salary,0);
   const totalRetainer = clients.reduce((s,c)=>s+c.retainer,0);
-  const totalProjCost = projects.reduce((s,p)=>s+projCalc(p).projectCost,0);
-  const grossMargin = projects.reduce((s,p)=>{ const c=projCalc(p); return s+c.margin; },0);
+  const totalProjCost = activeProjects().reduce((s,p)=>s+projCalc(p).projectCost,0);
+  const grossMargin = activeProjects().reduce((s,p)=>{ const c=projCalc(p); return s+c.margin; },0);
   const avgMarginPct = totalRetainer>0?Math.round(grossMargin/totalRetainer*100):0;
   const mpColor = avgMarginPct>=40?'var(--green)':avgMarginPct>=15?'var(--amber)':'var(--red)';
 
@@ -2040,7 +2232,7 @@ function renderDashboard(){
     <div class="stat"><div class="stat-lbl">Gross Margin</div><div class="stat-val" style="color:${mpColor}">${inr(grossMargin)}</div><div class="stat-hint">${avgMarginPct}% avg</div></div>`;
 
   // Project cost vs budget
-  const pdata = projects.map(p=>{ const c=projCalc(p); return {...p,...c}; }).sort((a,b)=>b.retainer-a.retainer).slice(0,8);
+  const pdata = activeProjects().map(p=>{ const c=projCalc(p); return {...p,...c}; }).sort((a,b)=>b.retainer-a.retainer).slice(0,8);
   const maxR = pdata[0]?.retainer||1;
   document.getElementById('dash-proj-costs').innerHTML = pdata.map(p=>`
     <div style="margin-bottom:11px">
@@ -2058,7 +2250,7 @@ function renderDashboard(){
 
   // Utilisation
   const allocMap={};
-  projects.forEach(p=>{ (p.allocations||[]).forEach(a=>{ if(!allocMap[a.memberId]) allocMap[a.memberId]=0; allocMap[a.memberId]+=(+(a.hoursPerDay*22).toFixed(1)); }); });
+  activeProjects().forEach(p=>{ (p.allocations||[]).forEach(a=>{ if(!allocMap[a.memberId]) allocMap[a.memberId]=0; allocMap[a.memberId]+=(+(a.hoursPerDay*22).toFixed(1)); }); });
   const topUtil = team.map(m=>({...m,hrs:allocMap[m.id]||0})).filter(m=>m.hrs>0).sort((a,b)=>b.hrs-a.hrs).slice(0,10);
   document.getElementById('dash-util').innerHTML = topUtil.map(m=>{
     const p=Math.min(100,Math.round(m.hrs/HOURS_MONTH*100));
@@ -2078,7 +2270,7 @@ function renderDashboard(){
 
   // Project summary table
   const tbody = document.getElementById('dash-proj-body');
-  tbody.innerHTML = projects.map(p=>{
+  tbody.innerHTML = activeProjects().map(p=>{
     const c=projCalc(p);
     const mpColor=c.marginPct>=40?'var(--green)':c.marginPct>=15?'var(--amber)':'var(--red)';
     const scls={Active:'badge-green','On Hold':'badge-amber',Completed:'badge-teal',Planning:'badge-blue'}[p.status]||'badge-gray';
@@ -2105,9 +2297,9 @@ function renderInsights(){
   const over   = team.map(m=>({m,h:alloc[m.id]||0})).filter(x=>x.h>HOURS_MONTH).sort((a,b)=>b.h-a.h);
   const idle   = team.filter(m=>m.salary>0 && (alloc[m.id]||0) < HOURS_MONTH*0.3)
                      .map(m=>({m,h:alloc[m.id]||0})).sort((a,b)=>a.h-b.h);
-  const calc   = projects.map(p=>({p,c:projCalc(p)}));
+  const calc   = activeProjects().map(p=>({p,c:projCalc(p)}));
   const losers = calc.filter(x=>x.c.retainer>0 && x.c.margin<0).sort((a,b)=>a.c.margin-b.c.margin);
-  const unbilled = projects.filter(p=>{ const cl=byId(clients,p.clientId); return cl && !cl.retainer && (p.allocations||[]).length; });
+  const unbilled = activeProjects().filter(p=>{ const cl=byId(clients,p.clientId); return cl && !cl.retainer && (p.allocations||[]).length; });
   const lowRoi = team.filter(m=>m.salary>0).map(m=>({m,roi:(revMap[m.id]||0)/m.salary}))
                      .filter(x=>x.roi<1).sort((a,b)=>a.roi-b.roi);
   const totalFree = team.reduce((s,m)=>s+Math.max(0,HOURS_MONTH-(alloc[m.id]||0)),0);
