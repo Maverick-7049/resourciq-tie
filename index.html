@@ -925,6 +925,19 @@ function isWebDevProject(proj){
   });
 }
 
+// GSE cost — split across every project with a video editor, except the excluded clients.
+const GSE_MONTHLY = 25000;
+const GSE_EXCLUDED_CLIENTS = ["Aeka's Coffee", "SBII"];
+
+function isVideoEditorProject(proj){
+  return (proj.allocations||[]).some(a=>a.role.toLowerCase().includes('video editor'));
+}
+function isGSEEligible(proj){
+  const client = byId(clients, proj.clientId);
+  if(client && GSE_EXCLUDED_CLIENTS.includes(client.name)) return false;
+  return isVideoEditorProject(proj);
+}
+
 function projCalc(proj){
   const client = byId(clients, proj.clientId);
   const retainer = proj.budgetOverride || (client ? client.retainer : 0);
@@ -957,13 +970,16 @@ function projCalc(proj){
   const miscWebDevCost = isWebDevProject(proj) && webDevProjectCount ? Math.round(MISC_WEBDEV_MONTHLY/webDevProjectCount) : 0;
   const miscCost = miscFixedCost + miscSeoCost + miscWebDevCost;
 
-  const projectCost = teamCost + overheadCost + shootCost + coreCost + miscCost;
+  const gseProjectCount = projects.filter(isGSEEligible).length;
+  const gseCost = isGSEEligible(proj) && gseProjectCount ? Math.round(GSE_MONTHLY/gseProjectCount) : 0;
+
+  const projectCost = teamCost + overheadCost + shootCost + coreCost + miscCost + gseCost;
 
   const totalHours = (proj.allocations||[]).reduce((s,a)=>s+(+(a.hoursPerDay*22).toFixed(1)),0);
   const margin = retainer - projectCost;
   const marginPct = retainer > 0 ? Math.round(margin/retainer*100) : 0;
 
-  return {retainer,projectCost,teamCost,overheadCost,shootCost,coreCost,miscCost,miscFixedCost,miscSeoCost,miscWebDevCost,margin,marginPct,totalHours,memberBreakdown,loggedCost,client};
+  return {retainer,projectCost,teamCost,overheadCost,shootCost,coreCost,miscCost,miscFixedCost,miscSeoCost,miscWebDevCost,gseCost,margin,marginPct,totalHours,memberBreakdown,loggedCost,client};
 }
 
 function editProject(id){
@@ -1523,6 +1539,7 @@ function openSnap(projId){
         <div class="cost-line"><span class="xs muted">Core Team Costs (shared, split across all projects)</span><span class="mono">${inr(c.coreCost)}</span></div>
         <div class="cost-line"><span class="xs muted">Misc Costs (tools/subscriptions)</span><span class="mono">${inr(c.miscCost)}</span></div>
         ${c.shootCost?`<div class="cost-line"><span class="xs muted">Shoot Cost</span><span class="mono">${inr(c.shootCost)}</span></div>`:''}
+        ${c.gseCost?`<div class="cost-line"><span class="xs muted">GSE Cost</span><span class="mono">${inr(c.gseCost)}</span></div>`:''}
         <div class="cost-line total"><span>Total Project Cost</span><span class="mono c-accent">${inr(c.projectCost)}</span></div>
       </div>
 
@@ -1535,6 +1552,7 @@ function openSnap(projId){
         <div class="cost-line"><span class="muted">Core Team Costs</span><span class="mono" style="color:var(--red)">− ${inr(c.coreCost)}</span></div>
         <div class="cost-line"><span class="muted">Misc Costs (tools/subscriptions)</span><span class="mono" style="color:var(--red)">− ${inr(c.miscCost)}</span></div>
         ${c.shootCost?`<div class="cost-line"><span class="muted">Shoot Cost</span><span class="mono" style="color:var(--red)">− ${inr(c.shootCost)}</span></div>`:''}
+        ${c.gseCost?`<div class="cost-line"><span class="muted">GSE Cost</span><span class="mono" style="color:var(--red)">− ${inr(c.gseCost)}</span></div>`:''}
         <div class="cost-line total">
           <span>Gross Margin</span>
           <div style="text-align:right"><div class="mono fw7" style="color:${mpColor}">${inr(c.margin)}</div><div class="xs" style="color:${mpColor}">${c.marginPct}% margin</div></div>
