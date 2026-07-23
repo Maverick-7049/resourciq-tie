@@ -900,11 +900,19 @@ function av(member, size='sm'){
 }
 
 // Project computed values
-// Admin overhead — fixed at 40K/month, split evenly across every project.
+// Admin overhead — fixed at 40K/month (Neha's admin portion), split evenly across every project.
 // (Neha's other 15K is Influencer Marketing & PR work, not admin overhead — excluded here.)
 const ADMIN_COST_MONTHLY = 40000;
-function adminHRPerProject(){
+function adminPerProject(){
   return projects.length ? ADMIN_COST_MONTHLY/projects.length : 0;
+}
+
+// HR overhead — rest of the HR & Admin team's salaries (everyone except Neha), split evenly.
+function hrCostMonthly(){
+  return team.filter(m=>m.dept==='HR & Admin Team' && m.name!=='Neha Vadhariya').reduce((s,m)=>s+m.salary,0);
+}
+function hrPerProject(){
+  return projects.length ? hrCostMonthly()/projects.length : 0;
 }
 
 // Core team salaries — fixed, split evenly across every project.
@@ -960,7 +968,8 @@ function projCalc(proj){
   let loggedCost = 0;
   projLogs.forEach(l=>{ const m=byId(team,l.memberId); if(m) loggedCost+=m.rate*l.hours; });
 
-  const overheadCost = Math.round(adminHRPerProject());
+  const adminCost = Math.round(adminPerProject());
+  const hrCost = Math.round(hrPerProject());
   const shootCost = proj.shootCost||0;
   const coreCost = projects.length ? Math.round(CORE_COST_MONTHLY/projects.length) : 0;
 
@@ -974,13 +983,13 @@ function projCalc(proj){
   const gseProjectCount = projects.filter(isGSEEligible).length;
   const gseCost = isGSEEligible(proj) && gseProjectCount ? Math.round(GSE_MONTHLY/gseProjectCount) : 0;
 
-  const projectCost = teamCost + overheadCost + shootCost + coreCost + miscCost + gseCost;
+  const projectCost = teamCost + adminCost + hrCost + shootCost + coreCost + miscCost + gseCost;
 
   const totalHours = (proj.allocations||[]).reduce((s,a)=>s+(+(a.hoursPerDay*22).toFixed(1)),0);
   const margin = retainer - projectCost;
   const marginPct = retainer > 0 ? Math.round(margin/retainer*100) : 0;
 
-  return {retainer,projectCost,teamCost,overheadCost,shootCost,coreCost,miscCost,miscFixedCost,miscSeoCost,miscWebDevCost,gseCost,margin,marginPct,totalHours,memberBreakdown,loggedCost,client};
+  return {retainer,projectCost,teamCost,adminCost,hrCost,shootCost,coreCost,miscCost,miscFixedCost,miscSeoCost,miscWebDevCost,gseCost,margin,marginPct,totalHours,memberBreakdown,loggedCost,client};
 }
 
 function editProject(id){
@@ -1436,7 +1445,8 @@ function projCard(proj){
     <!-- Fixed costs -->
     <div style="padding:12px 20px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:18px">
       <div><div class="xs muted">Team Cost</div><div class="mono fw6" style="font-size:12.5px">${inr(c.teamCost)}</div></div>
-      <div><div class="xs muted">Admin Overhead</div><div class="mono fw6" style="font-size:12.5px">${inr(c.overheadCost)}</div></div>
+      <div><div class="xs muted">Admin Overhead</div><div class="mono fw6" style="font-size:12.5px">${inr(c.adminCost)}</div></div>
+      <div><div class="xs muted">HR Overhead</div><div class="mono fw6" style="font-size:12.5px">${inr(c.hrCost)}</div></div>
       <div><div class="xs muted">Core Team Costs</div><div class="mono fw6" style="font-size:12.5px">${inr(c.coreCost)}</div></div>
       <div><div class="xs muted">Misc Costs</div><div class="mono fw6" style="font-size:12.5px">${inr(c.miscCost)}</div></div>
       ${c.shootCost?`<div><div class="xs muted">Shoot Cost</div><div class="mono fw6" style="font-size:12.5px">${inr(c.shootCost)}</div></div>`:''}
@@ -1547,7 +1557,8 @@ function openSnap(projId){
       <div class="snap-section">
         <div class="section-hdr"><div class="section-title">Cost by Department</div></div>
         ${deptRows}
-        <div class="cost-line"><span class="xs muted">Admin Overhead (shared, split across all projects)</span><span class="mono">${inr(c.overheadCost)}</span></div>
+        <div class="cost-line"><span class="xs muted">Admin Overhead (shared, split across all projects)</span><span class="mono">${inr(c.adminCost)}</span></div>
+        <div class="cost-line"><span class="xs muted">HR Overhead (shared, split across all projects)</span><span class="mono">${inr(c.hrCost)}</span></div>
         <div class="cost-line"><span class="xs muted">Core Team Costs (shared, split across all projects)</span><span class="mono">${inr(c.coreCost)}</span></div>
         <div class="cost-line"><span class="xs muted">Misc Costs (tools/subscriptions)</span><span class="mono">${inr(c.miscCost)}</span></div>
         ${c.shootCost?`<div class="cost-line"><span class="xs muted">Shoot Cost</span><span class="mono">${inr(c.shootCost)}</span></div>`:''}
@@ -1560,7 +1571,8 @@ function openSnap(projId){
         <div class="section-hdr"><div class="section-title">P&L Summary</div></div>
         <div class="cost-line"><span class="muted">Client Retainer (Revenue)</span><span class="mono fw6 c-green">${inr(c.retainer)}</span></div>
         <div class="cost-line"><span class="muted">Team Cost (Allocation-based)</span><span class="mono" style="color:var(--red)">− ${inr(c.teamCost)}</span></div>
-        <div class="cost-line"><span class="muted">Admin Overhead</span><span class="mono" style="color:var(--red)">− ${inr(c.overheadCost)}</span></div>
+        <div class="cost-line"><span class="muted">Admin Overhead</span><span class="mono" style="color:var(--red)">− ${inr(c.adminCost)}</span></div>
+        <div class="cost-line"><span class="muted">HR Overhead</span><span class="mono" style="color:var(--red)">− ${inr(c.hrCost)}</span></div>
         <div class="cost-line"><span class="muted">Core Team Costs</span><span class="mono" style="color:var(--red)">− ${inr(c.coreCost)}</span></div>
         <div class="cost-line"><span class="muted">Misc Costs (tools/subscriptions)</span><span class="mono" style="color:var(--red)">− ${inr(c.miscCost)}</span></div>
         ${c.shootCost?`<div class="cost-line"><span class="muted">Shoot Cost</span><span class="mono" style="color:var(--red)">− ${inr(c.shootCost)}</span></div>`:''}
