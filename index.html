@@ -596,6 +596,7 @@ select option{background:#14181e;color:var(--text);}
     <select id="cost-proj-filter" onchange="renderCosts()"><option value="">All Projects</option></select>
   </div>
   <div class="stats-row" id="cost-stats"></div>
+  <div class="card" style="margin-bottom:14px;"><div class="card-title">Team-wise Overall Costing</div><div id="cost-by-team"></div></div>
   <div class="g2" style="margin-bottom:14px;">
     <div class="card"><div class="card-title">Cost by Member</div><div id="cost-by-member"></div></div>
     <div class="card"><div class="card-title">Cost by Department</div><div id="cost-by-dept"></div></div>
@@ -2087,7 +2088,54 @@ function renderHours(){
 // ══════════════════════════════════════════════════════════
 // COSTS
 // ══════════════════════════════════════════════════════════
+// Team-wise overall costing: payroll, allocated cost, attributed revenue and
+// utilisation per team bracket (Account Management + Social Media are merged).
+function renderTeamCosting(){
+  const el = document.getElementById('cost-by-team');
+  if(!el) return;
+  const revMap = memberRevenueMap();
+  const active = activeProjects();
+  const stat = {};
+  const get = b => stat[b] || (stat[b]={members:0,payroll:0,alloc:0,hours:0,rev:0,cap:0});
+  team.forEach(m=>{ const s=get(bracketOf(m.dept)); s.members++; s.payroll+=m.salary; s.cap+=HOURS_MONTH; s.rev+=revMap[m.id]||0; });
+  active.forEach(p=>{ (p.allocations||[]).forEach(a=>{ const m=byId(team,a.memberId); if(!m) return; const hpm=+(a.hoursPerDay*22).toFixed(1); const s=get(bracketOf(m.dept)); s.alloc+=Math.round(m.rate*hpm); s.hours+=hpm; }); });
+
+  const totalPayroll = team.reduce((s,m)=>s+m.salary,0)||1;
+  const rows = Object.entries(stat).sort((a,b)=>b[1].payroll-a[1].payroll);
+  el.innerHTML = `
+    <div class="tbl-wrap" style="border:none;border-radius:0">
+      <table>
+        <thead><tr><th>Team</th><th>Members</th><th>Monthly Payroll</th><th>% of Payroll</th><th>Allocated Cost</th><th>Attributed Revenue</th><th>Utilisation</th></tr></thead>
+        <tbody>${rows.map(([b,s])=>{
+          const util=Math.round(s.hours/(s.cap||1)*100);
+          const uc=util>=70?'var(--green)':util>=40?'var(--amber)':'var(--red)';
+          const share=Math.round(s.payroll/totalPayroll*100);
+          return `<tr>
+            <td class="fw6">${b}</td>
+            <td class="mono">${s.members}</td>
+            <td class="mono fw6 c-red">${inr(s.payroll)}</td>
+            <td class="mono">${share}%</td>
+            <td class="mono c-accent">${inr(s.alloc)}</td>
+            <td class="mono c-green">${inr(s.rev)}</td>
+            <td class="mono fw6" style="color:${uc}">${util}%</td>
+          </tr>`;}).join('')}
+          <tr style="background:var(--bg3)">
+            <td class="fw7">Total</td>
+            <td class="mono fw7">${team.length}</td>
+            <td class="mono fw7 c-red">${inr(totalPayroll)}</td>
+            <td class="mono fw7">100%</td>
+            <td class="mono fw7 c-accent">${inr(rows.reduce((x,[,s])=>x+s.alloc,0))}</td>
+            <td class="mono fw7 c-green">${inr(rows.reduce((x,[,s])=>x+s.rev,0))}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="xs muted" style="margin-top:8px">Payroll is total monthly salaries per team. Allocated cost and utilisation are from active project staffing (176h/month capacity per member). Account Management and Social Media are shown as one bracket.</div>`;
+}
+
 function renderCosts(){
+  renderTeamCosting();
   const pf=document.getElementById('cost-proj-filter');
   const pfv=pf.value;
   pf.innerHTML='<option value="">All Projects</option>'+projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
