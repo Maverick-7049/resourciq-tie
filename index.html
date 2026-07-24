@@ -402,7 +402,10 @@ select option{background:#14181e;color:var(--text);}
   <div class="nav-tab" onclick="goTab('insights',this)">Insights</div>
   <div class="nav-tab" onclick="goTab('hours',this)">Hour Logs</div>
   <div class="nav-tab" onclick="goTab('costs',this)">Cost Analysis</div>
-  <div style="margin-left:auto;flex-shrink:0;">
+  <div style="margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:8px;">
+    <span class="xs muted" style="text-transform:uppercase;letter-spacing:0.6px">Month</span>
+    <select id="period-select" onchange="setPeriod(this.value)" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:var(--r);padding:6px 10px;font-size:12px;font-weight:600;outline:none;"></select>
+    <button class="btn btn-ghost" style="font-size:12px;padding:5px 10px;" onclick="createPeriod()" title="Create a new month, optionally copying this month's projects">+ New Month</button>
     <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px;" onclick="doLogout()">Sign Out</button>
   </div>
 </nav>
@@ -1013,6 +1016,93 @@ let clients  = JSON.parse(localStorage.getItem('tie_clients')  || 'null') || SEE
 let projects = JSON.parse(localStorage.getItem('tie_projects') || 'null') || SEED_PROJECTS;
 let logs     = JSON.parse(localStorage.getItem('tie_logs')     || 'null') || [];
 
+// ══ MONTHLY PERIODS ══
+// Each project belongs to a period ("Month Year"). Views and costing are scoped to
+// the selected period, so August can be planned independently of July.
+const BASE_PERIOD = 'July 2026';
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let activePeriod = localStorage.getItem('rmca_period') || null;
+
+// Assign a period to any legacy project that lacks one (all current data is the base period).
+function migrateProjects(){
+  let changed = false;
+  projects.forEach(p=>{ if(!p.period){ p.period = BASE_PERIOD; changed = true; } });
+  return changed;
+}
+function periodKey(str){
+  const parts = (str||'').trim().split(/\s+/);
+  const mi = MONTH_NAMES.indexOf(parts[0]);
+  const yr = parseInt(parts[1])||0;
+  return yr*100 + (mi<0?0:mi);
+}
+function allPeriods(){
+  const set = new Set(projects.map(p=>p.period).filter(Boolean));
+  if(activePeriod) set.add(activePeriod);
+  if(!set.size) set.add(BASE_PERIOD);
+  return [...set].sort((a,b)=>periodKey(a)-periodKey(b));
+}
+function latestPeriod(){ const ps = allPeriods(); return ps[ps.length-1]; }
+function ensureActivePeriod(){
+  const ps = allPeriods();
+  if(!activePeriod || !ps.includes(activePeriod)) activePeriod = latestPeriod();
+}
+function syncPeriodUI(){
+  const sel = document.getElementById('period-select');
+  if(!sel) return;
+  sel.innerHTML = allPeriods().map(p=>`<option value="${p}"${p===activePeriod?' selected':''}>${p}</option>`).join('');
+}
+function renderActivePage(){
+  const active = document.querySelector('.nav-tab.active');
+  const m = active && (active.getAttribute('onclick')||'').match(/goTab\('(\w+)'/);
+  const map = {dashboard:renderDashboard,team:renderTeam,workload:renderWorkload,clients:renderClients,projects:renderProjects,onetime:renderOneTime,insights:renderInsights,hours:renderHours,costs:renderCosts};
+  (map[m&&m[1]]||renderDashboard)();
+}
+function setPeriod(p){
+  activePeriod = p;
+  localStorage.setItem('rmca_period', p);
+  syncPeriodUI();
+  projectCounts();
+  renderActivePage();
+}
+function nextMonthGuess(){
+  const parts = (latestPeriod()||BASE_PERIOD).split(/\s+/);
+  let mi = MONTH_NAMES.indexOf(parts[0]); let yr = parseInt(parts[1])||2026;
+  mi++; if(mi>11){ mi=0; yr++; }
+  return { month: MONTH_NAMES[mi<0?0:mi], year: yr };
+}
+// Create a new month, optionally cloning the current month's projects (team stays the
+// same, current amounts are baked in) so you can adjust names and retainers for it.
+function createPeriod(){
+  const g = nextMonthGuess();
+  const month = (prompt('New month name:', g.month)||'').trim();
+  if(!month) return;
+  if(MONTH_NAMES.indexOf(month)<0 && !confirm('"'+month+'" is not a standard month name. Use it anyway?')) return;
+  const yearStr = (prompt('Year:', String(g.year))||'').trim();
+  if(!yearStr) return;
+  const period = month+' '+yearStr;
+  if(allPeriods().includes(period)){ alert(period+' already exists. Switching to it.'); setPeriod(period); return; }
+  const copy = confirm("Copy this month's ("+activePeriod+") projects into "+period+"?\n\nTeam allocations and current amounts carry over, so you can edit names and retainers for "+period+" without affecting "+activePeriod+".\n\nOK = copy, Cancel = start "+period+" empty.");
+  if(copy){
+    const src = projects.filter(p=>p.period===activePeriod && !p.archived);
+    let nid = nextId(projects);
+    src.forEach(p=>{
+      const clone = JSON.parse(JSON.stringify(p));
+      clone.id = nid++;
+      clone.period = period;
+      clone.month = month;
+      clone.year = parseInt(yearStr)||clone.year;
+      clone.archived = false;
+      clone.budgetOverride = retainerOf(p); // bake current amount; edits here never touch other months
+      projects.push(clone);
+    });
+  }
+  save();
+  setPeriod(period);
+}
+
+// Run migration for the initial (localStorage/seed) data.
+migrateProjects(); ensureActivePeriod(); syncPeriodUI();
+
 function save(){
   localStorage.setItem('tie_team',     JSON.stringify(team));
   localStorage.setItem('tie_clients',  JSON.stringify(clients));
@@ -1034,8 +1124,8 @@ function save(){
 // ══ HELPERS ══
 function byId(arr,id){ return arr.find(x=>x.id==id); }
 function nextId(arr){ return arr.length ? Math.max(...arr.map(x=>x.id))+1 : 1; }
-// Preview-deleted (archived) projects are excluded from every rollup, but kept and restorable.
-function activeProjects(){ return projects.filter(p=>!p.archived); }
+// Active = current period and not preview-deleted (archived). Everything rolls up from this.
+function activeProjects(){ return projects.filter(p=>!p.archived && p.period===activePeriod); }
 const inr = n => '₹' + Math.round(n).toLocaleString('en-IN');
 const pct = (a,b) => b ? Math.round(a/b*100) : 0;
 const fh  = h => (h%1===0 ? h : h.toFixed(1))+'h';
@@ -1116,8 +1206,8 @@ function retainerOf(proj){
 // disabled are excluded entirely (they carry no shared overhead, and the pool is
 // distributed across the remaining eligible projects).
 function poolShare(proj, poolMonthly, scopeFn){
-  if(proj.fixedCostsDisabled || proj.archived || !scopeFn(proj) || !poolMonthly) return 0;
-  const eligible = projects.filter(p=>!p.fixedCostsDisabled && !p.archived && scopeFn(p));
+  if(proj.fixedCostsDisabled || proj.archived || proj.period!==activePeriod || !scopeFn(proj) || !poolMonthly) return 0;
+  const eligible = projects.filter(p=>!p.fixedCostsDisabled && !p.archived && p.period===activePeriod && scopeFn(p));
   const n = eligible.length;
   if(!n) return 0;
   const base = (poolMonthly * FIXED_COST_BASE_RATIO) / n;
@@ -1212,8 +1302,7 @@ let teamDeptFilter = '';
 function memberRevenueMap(){
   const revMap = {};
   team.forEach(m=>revMap[m.id]=0);
-  projects.forEach(p=>{
-    if(p.archived) return;
+  activeProjects().forEach(p=>{
     const client = byId(clients, p.clientId);
     const retainer = p.budgetOverride || (client ? client.retainer : 0);
     const allocs = p.allocations||[];
@@ -1402,9 +1491,9 @@ function renderClients(){
   document.getElementById('tc-clients').textContent = clients.length;
   const tbody = document.getElementById('clients-body');
 
-  // "Project size" = total team members allocated across a client's active projects
-  const sizeOf = c => projects.filter(p=>p.clientId==c.id&&!p.archived).reduce((s,p)=>s+(p.allocations||[]).length,0);
-  const costOf = c => projects.filter(p=>p.clientId==c.id&&!p.archived).reduce((s,p)=>s+projCalc(p).projectCost,0);
+  // "Project size" = team members allocated across a client's active projects this month
+  const sizeOf = c => projects.filter(p=>p.clientId==c.id&&!p.archived&&p.period===activePeriod).reduce((s,p)=>s+(p.allocations||[]).length,0);
+  const costOf = c => projects.filter(p=>p.clientId==c.id&&!p.archived&&p.period===activePeriod).reduce((s,p)=>s+projCalc(p).projectCost,0);
 
   const q = (document.getElementById('client-search')?.value||'').toLowerCase().trim();
   const sortBy = document.getElementById('client-sort')?.value || 'size';
@@ -1419,7 +1508,7 @@ function renderClients(){
   });
 
   tbody.innerHTML = list.map((c,i)=>{
-    const cProjs = projects.filter(p=>p.clientId==c.id&&!p.archived);
+    const cProjs = projects.filter(p=>p.clientId==c.id&&!p.archived&&p.period===activePeriod);
     let totalCost = 0;
     cProjs.forEach(p=>{ totalCost += projCalc(p).projectCost; });
     const margin = c.retainer - totalCost;
@@ -1514,8 +1603,7 @@ let allocRowCount = 0;
 function memberAllocatedHours(excludeProjId){
   const map = {};
   team.forEach(m=>map[m.id]=0);
-  projects.forEach(p=>{
-    if(p.archived) return;
+  activeProjects().forEach(p=>{
     if(excludeProjId && p.id===excludeProjId) return;
     (p.allocations||[]).forEach(a=>{ if(map[a.memberId]!=null) map[a.memberId]+=(+(a.hoursPerDay*22).toFixed(1)); });
   });
@@ -1654,7 +1742,7 @@ function saveProject(){
     const idx = projects.findIndex(p=>p.id===editId);
     if(idx>-1) projects[idx]={...projects[idx],...fields};
   } else {
-    projects.push({id:nextId(projects),...fields});
+    projects.push({id:nextId(projects),period:activePeriod,...fields});
   }
   save(); closeModal('modal-project');
   refreshProjects(); renderDashboard();
@@ -1716,8 +1804,9 @@ function newProject(type){
 }
 
 function projectCounts(){
-  document.getElementById('tc-projects').textContent = projects.filter(p=>!p.oneTime).length;
-  document.getElementById('tc-onetime').textContent  = projects.filter(p=>p.oneTime).length;
+  const inPeriod = projects.filter(p=>p.period===activePeriod);
+  document.getElementById('tc-projects').textContent = inPeriod.filter(p=>!p.oneTime).length;
+  document.getElementById('tc-onetime').textContent  = inPeriod.filter(p=>p.oneTime).length;
 }
 
 // Shared renderer for both the Retainer (Projects) and One-Time pages.
@@ -1728,8 +1817,8 @@ function renderProjectGroup(kind){
   const searchId = isOne?'onetime-search':'proj-search';
   const sortId   = isOne?'onetime-sort':'proj-sort';
 
-  const all = projects.filter(p=> !!p.oneTime===isOne);
-  if(!all.length){ container.innerHTML='<div class="tbl-empty">No '+(isOne?'one-time':'retainer')+' projects yet. Create one to get started.</div>'; return; }
+  const all = projects.filter(p=> !!p.oneTime===isOne && p.period===activePeriod);
+  if(!all.length){ container.innerHTML='<div class="tbl-empty">No '+(isOne?'one-time':'retainer')+' projects in '+activePeriod+' yet. Create one to get started.</div>'; return; }
 
   const q = (document.getElementById(searchId)?.value||'').toLowerCase().trim();
   const sortBy = document.getElementById(sortId)?.value || 'value';
@@ -2138,7 +2227,7 @@ function renderCosts(){
   renderTeamCosting();
   const pf=document.getElementById('cost-proj-filter');
   const pfv=pf.value;
-  pf.innerHTML='<option value="">All Projects</option>'+projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  pf.innerHTML='<option value="">All Projects</option>'+activeProjects().map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
   pf.value=pfv;
 
   const projFilter=parseInt(pfv)||0;
@@ -2455,12 +2544,14 @@ fetch('/api/data').then(r=>r.json()).then(data=>{
   if(data.tie_clients && data.tie_clients.length)  { clients=data.tie_clients; localStorage.setItem('tie_clients',JSON.stringify(clients)); }
   if(data.tie_projects&& data.tie_projects.length) { projects=data.tie_projects;localStorage.setItem('tie_projects',JSON.stringify(projects)); }
   if(data.tie_logs    && data.tie_logs.length)     { logs=data.tie_logs;       localStorage.setItem('tie_logs',JSON.stringify(logs)); }
+  migrateProjects(); ensureActivePeriod(); syncPeriodUI();
   populateClientModal();
   renderDashboard();
   document.getElementById('tc-team').textContent = team.length;
   document.getElementById('tc-clients').textContent = clients.length;
   projectCounts();
 }).catch(()=>{
+  migrateProjects(); ensureActivePeriod(); syncPeriodUI();
   populateClientModal();
   renderDashboard();
   document.getElementById('tc-team').textContent = team.length;
