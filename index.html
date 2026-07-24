@@ -398,6 +398,7 @@ select option{background:#14181e;color:var(--text);}
   <div class="nav-tab" onclick="goTab('workload',this)">Workload</div>
   <div class="nav-tab" onclick="goTab('clients',this)">Clients <span class="tab-count" id="tc-clients">0</span></div>
   <div class="nav-tab" onclick="goTab('projects',this)">Projects <span class="tab-count" id="tc-projects">0</span></div>
+  <div class="nav-tab" onclick="goTab('onetime',this)">One-Time <span class="tab-count" id="tc-onetime">0</span></div>
   <div class="nav-tab" onclick="goTab('insights',this)">Insights</div>
   <div class="nav-tab" onclick="goTab('hours',this)">Hour Logs</div>
   <div class="nav-tab" onclick="goTab('costs',this)">Cost Analysis</div>
@@ -504,14 +505,14 @@ select option{background:#14181e;color:var(--text);}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ PROJECTS ══ -->
+<!-- ═══════════════════════════════════════════ PROJECTS (RETAINER) ══ -->
 <div class="page" id="page-projects">
   <div class="page-hdr">
     <div class="page-hdr-left">
-      <div class="page-title">Projects</div>
-      <div class="page-sub">Team allocations, cost snapshots and profitability per project</div>
+      <div class="page-title">Retainer Projects</div>
+      <div class="page-sub">Recurring monthly clients, allocations and profitability</div>
     </div>
-    <button class="btn btn-primary btn-sm" onclick="openModal('modal-project')">+ New Project</button>
+    <button class="btn btn-primary btn-sm" onclick="newProject('retainer')">+ New Project</button>
   </div>
   <div class="filter-row">
     <input id="proj-search" placeholder="Search project or client" oninput="renderProjects()" style="min-width:200px">
@@ -524,6 +525,28 @@ select option{background:#14181e;color:var(--text);}
     </select>
   </div>
   <div id="proj-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════ ONE-TIME PROJECTS ══ -->
+<div class="page" id="page-onetime">
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <div class="page-title">One-Time Projects</div>
+      <div class="page-sub">One off / variable projects, update amounts and costs each month</div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="newProject('onetime')">+ New One-Time Project</button>
+  </div>
+  <div class="filter-row">
+    <input id="onetime-search" placeholder="Search project or client" oninput="renderOneTime()" style="min-width:200px">
+    <select id="onetime-sort" onchange="renderOneTime()">
+      <option value="value">Sort: Value (high to low)</option>
+      <option value="name">Sort: Name (A to Z)</option>
+      <option value="margin">Sort: Margin % (low to high)</option>
+      <option value="cost">Sort: Project Cost (high to low)</option>
+      <option value="status">Sort: Status</option>
+    </select>
+  </div>
+  <div id="onetime-list"></div>
 </div>
 
 <!-- ═══════════════════════════════════════════ INSIGHTS ══ -->
@@ -1476,9 +1499,9 @@ function deleteClient(id){
   projects = projects.filter(p=>p.clientId!=id);
   logs     = logs.filter(l=>!projIds.includes(l.projId));
   save();
-  renderClients(); renderProjects(); renderDashboard(); renderHours();
+  renderClients(); refreshProjects(); renderDashboard(); renderHours();
   document.getElementById('tc-clients').textContent = clients.length;
-  document.getElementById('tc-projects').textContent = projects.length;
+  projectCounts();
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1633,20 +1656,40 @@ function saveProject(){
     projects.push({id:nextId(projects),...fields});
   }
   save(); closeModal('modal-project');
-  renderProjects(); renderDashboard();
-  document.getElementById('tc-projects').textContent = projects.length;
+  refreshProjects(); renderDashboard();
+  projectCounts();
 }
 
 function deleteProject(id){
-  if(!confirm('Delete this project?')) return;
-  projects=projects.filter(p=>p.id!==id); save(); renderProjects(); renderDashboard();
+  const p = byId(projects, id);
+  if(!p) return;
+  const client = byId(clients, p.clientId);
+  if(!client){
+    if(!confirm('Delete this project?')) return;
+    projects = projects.filter(x=>x.id!==id);
+    logs = logs.filter(l=>l.projId!=id);
+    save(); refreshProjects(); renderDashboard();
+    projectCounts();
+    return;
+  }
+  const siblings = projects.filter(x=>x.clientId==client.id);
+  const extra = siblings.length>1 ? ` and ${siblings.length-1} other project(s) of this client` : '';
+  if(!confirm(`Delete this project and remove its client "${client.name}"${extra} everywhere?`)) return;
+  const projIds = siblings.map(x=>x.id);
+  projects = projects.filter(x=>x.clientId!=client.id);
+  clients  = clients.filter(c=>c.id!=client.id);
+  logs     = logs.filter(l=>!projIds.includes(l.projId));
+  save();
+  refreshProjects(); renderClients(); renderDashboard(); renderHours();
+  projectCounts();
+  document.getElementById('tc-clients').textContent = clients.length;
 }
 
 function toggleFixedCosts(id){
   const p = byId(projects, id);
   if(!p) return;
   p.fixedCostsDisabled = !p.fixedCostsDisabled;
-  save(); renderProjects(); renderDashboard();
+  save(); refreshProjects(); renderDashboard();
 }
 
 // Preview delete: archive (soft) so it is excluded from every rollup but kept and restorable.
@@ -1654,28 +1697,46 @@ function archiveProject(id){
   const p = byId(projects, id);
   if(!p) return;
   p.archived = true;
-  save(); renderProjects(); renderDashboard();
-  document.getElementById('tc-projects').textContent = projects.length;
+  save(); refreshProjects(); renderDashboard();
+  projectCounts();
 }
 function restoreProject(id){
   const p = byId(projects, id);
   if(!p) return;
   p.archived = false;
-  save(); renderProjects(); renderDashboard();
+  save(); refreshProjects(); renderDashboard();
 }
 
-function renderProjects(){
-  document.getElementById('tc-projects').textContent = projects.length;
-  const container = document.getElementById('proj-list');
-  if(!projects.length){ container.innerHTML='<div class="tbl-empty">No projects yet. Create your first project.</div>'; return; }
+// Open the New Project modal preset to a type (retainer or onetime).
+function newProject(type){
+  openModal('modal-project');
+  const sel = document.getElementById('p-type');
+  if(sel) sel.value = (type==='onetime') ? 'onetime' : 'retainer';
+}
 
-  const q = (document.getElementById('proj-search')?.value||'').toLowerCase().trim();
-  const sortBy = document.getElementById('proj-sort')?.value || 'value';
-  let list = [...projects];
+function projectCounts(){
+  document.getElementById('tc-projects').textContent = projects.filter(p=>!p.oneTime).length;
+  document.getElementById('tc-onetime').textContent  = projects.filter(p=>p.oneTime).length;
+}
+
+// Shared renderer for both the Retainer (Projects) and One-Time pages.
+function renderProjectGroup(kind){
+  const isOne = kind==='onetime';
+  projectCounts();
+  const container = document.getElementById(isOne?'onetime-list':'proj-list');
+  const searchId = isOne?'onetime-search':'proj-search';
+  const sortId   = isOne?'onetime-sort':'proj-sort';
+
+  const all = projects.filter(p=> !!p.oneTime===isOne);
+  if(!all.length){ container.innerHTML='<div class="tbl-empty">No '+(isOne?'one-time':'retainer')+' projects yet. Create one to get started.</div>'; return; }
+
+  const q = (document.getElementById(searchId)?.value||'').toLowerCase().trim();
+  const sortBy = document.getElementById(sortId)?.value || 'value';
+  let list = all;
   if(q) list = list.filter(p=>{ const cl=byId(clients,p.clientId); return p.name.toLowerCase().includes(q) || (cl&&cl.name.toLowerCase().includes(q)); });
   const calcCache = new Map();
   const cc = p => { if(!calcCache.has(p.id)) calcCache.set(p.id, projCalc(p)); return calcCache.get(p.id); };
-  list.sort((a,b)=>{
+  list = [...list].sort((a,b)=>{
     if(sortBy==='name') return a.name.localeCompare(b.name);
     if(sortBy==='margin') return cc(a).marginPct-cc(b).marginPct;
     if(sortBy==='cost') return cc(b).projectCost-cc(a).projectCost;
@@ -1683,22 +1744,16 @@ function renderProjects(){
     return cc(b).retainer-cc(a).retainer;
   });
 
-  const retainerProjs = list.filter(p=>!p.oneTime && !p.archived);
-  const oneTimeProjs  = list.filter(p=>p.oneTime && !p.archived);
-  const archivedProjs = list.filter(p=>p.archived);
-
-  const section = (title, arr, hint) => `
-    <div class="section-hdr" style="margin-top:6px">
-      <div class="section-title">${title} <span class="xs muted" style="font-weight:400">${arr.length} project${arr.length===1?'':'s'}</span></div>
-      <span class="xs muted">${hint}</span>
-    </div>
-    ${arr.length ? arr.map(proj=>projCard(proj)).join('') : '<div class="tbl-empty" style="margin-bottom:16px">None</div>'}`;
-
+  const active   = list.filter(p=>!p.archived);
+  const archived = list.filter(p=>p.archived);
   container.innerHTML =
-    section('Retainer Projects', retainerProjs, 'Recurring monthly clients') +
-    section('One Time Projects', oneTimeProjs, 'One off / project-based work') +
-    (archivedProjs.length ? archivedSection(archivedProjs) : '');
+    (active.length ? active.map(proj=>projCard(proj)).join('') : '<div class="tbl-empty" style="margin-bottom:16px">None</div>') +
+    (archived.length ? archivedSection(archived) : '');
 }
+
+function renderProjects(){ renderProjectGroup('retainer'); }
+function renderOneTime(){ renderProjectGroup('onetime'); }
+function refreshProjects(){ renderProjects(); renderOneTime(); }
 
 // Aggregate view of preview-deleted (archived) projects: what capacity and cost they free up.
 function archivedSection(arr){
@@ -2356,13 +2411,13 @@ fetch('/api/data').then(r=>r.json()).then(data=>{
   renderDashboard();
   document.getElementById('tc-team').textContent = team.length;
   document.getElementById('tc-clients').textContent = clients.length;
-  document.getElementById('tc-projects').textContent = projects.length;
+  projectCounts();
 }).catch(()=>{
   populateClientModal();
   renderDashboard();
   document.getElementById('tc-team').textContent = team.length;
   document.getElementById('tc-clients').textContent = clients.length;
-  document.getElementById('tc-projects').textContent = projects.length;
+  projectCounts();
 });
 
 // Unified goTab — overrides the earlier definition
@@ -2371,7 +2426,7 @@ function goTab(tab, el){
   if(el) el.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+tab).classList.add('active');
-  const renders = {dashboard:renderDashboard,team:renderTeam,workload:renderWorkload,clients:renderClients,projects:renderProjects,insights:renderInsights,hours:renderHours,costs:renderCosts};
+  const renders = {dashboard:renderDashboard,team:renderTeam,workload:renderWorkload,clients:renderClients,projects:renderProjects,onetime:renderOneTime,insights:renderInsights,hours:renderHours,costs:renderCosts};
   if(renders[tab]) renders[tab]();
 }
 </script>
